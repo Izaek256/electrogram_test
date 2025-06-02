@@ -10,7 +10,9 @@
     <meta name="csrf-token" content="{{ csrf_token }}">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link href="images/favicon.png" rel="shortcut icon">
+    <link rel="icon" type="image/png" href="{% static 'images/logo/favicon-32x32.png' %}">
+    <link href="{% static 'images/logo/favicon-16x16.png' %}" rel="apple-touch-icon">
+    <link href="images/logo/favicon-192x192.png" rel="icon" type="image/png">
     <title>Electrogram PLC-Home of Electronics</title>
     <script type="text/javascript">
         var csrfToken = '{{ csrf_token }}'; // Store CSRF token in a JavaScript variable
@@ -43,7 +45,8 @@
     <link rel="stylesheet" href="{% static 'css/app2.css' %}">
     <!-- Add Owl Carousel CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
     <!-- Add this line in the <head> section -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Search Suggestions Script -->
@@ -104,7 +107,7 @@
                                 <div class="ah-lg-mode">
 
                                     <span class="ah-close">✕ Close</span>
-                                    
+
                                     <!--====== List ======-->
                                     <ul class="ah-list ah-list--design1 ah-list--link-color-white">
                                         <li class="has-dropdown" data-tooltip="tooltip" data-placement="left"
@@ -114,7 +117,7 @@
 
                                             <!--====== Dropdown ======-->
 
-                                            
+
                                             <ul style="width:120px">
 
                                                 {% if user.is_authenticated %}
@@ -125,7 +128,7 @@
                                                         <span>Account</span>
                                                     </a>
 
-                                                    
+
                                                     <ul style="width:200px">
                                                         <li>
 
@@ -241,46 +244,56 @@
                                                     </ul>
                                                 </li>
                                                 <li class="has-dropdown has-dropdown--ul-left-100">
-                                                    <a>Account<i class="fas fa-angle-down i-state-right u-s-m-l-6"></i></a>
+                                                    <a>Account<i
+                                                            class="fas fa-angle-down i-state-right u-s-m-l-6"></i></a>
                                                     <span class="js-menu-toggle"></span>
                                                     <ul style="width:200px">
                                                         <li>
-                                                            <a href="{% url 'userauths:sign_in' %}">Signin / Already Registered</a>
+                                                            <a href="{% url 'userauths:sign_in' %}">Signin / Already
+                                                                Registered</a>
                                                         </li>
                                                         <li>
-                                                            <a href="{% url 'userauths:sign_up' %}">Signup / Register</a>
+                                                            <a href="{% url 'userauths:sign_up' %}">Signup /
+                                                                Register</a>
                                                         </li>
                                                         <li>
-                                                            <a href="{% url 'userauths:password_update' %}">Lost Password</a>
+                                                            <a href="{% url 'userauths:password_update' %}">Lost
+                                                                Password</a>
                                                         </li>
                                                     </ul>
                                                 </li>
                                                 <li class="has-dropdown has-dropdown--ul-left-100">
-                                                    <a href="{% url 'base:dashboard' %}">Dashboard<i class="fas fa-angle-down i-state-right u-s-m-l-6"></i></a>
+                                                    <a href="{% url 'base:dashboard' %}">Dashboard<i
+                                                            class="fas fa-angle-down i-state-right u-s-m-l-6"></i></a>
                                                     <span class="js-menu-toggle"></span>
                                                     <ul style="width:200px">
                                                         <li class="has-dropdown has-dropdown--ul-left-100">
-                                                            <a href="{% url 'base:dashboard' %}">Manage My Account<i class="fas fa-angle-down i-state-right u-s-m-l-6"></i></a>
+                                                            <a href="{% url 'base:dashboard' %}">Manage My Account<i
+                                                                    class="fas fa-angle-down i-state-right u-s-m-l-6"></i></a>
                                                             <span class="js-menu-toggle"></span>
                                                             <ul style="width:180px">
                                                                 <li>
-                                                                    <a href="{% url 'userauths:user_profile_update' %}">Edit Profile</a>
+                                                                    <a href="{% url 'userauths:user_profile_update' %}">Edit
+                                                                        Profile</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="{% url 'userauths:password_update' %}">Change Password</a>
+                                                                    <a href="{% url 'userauths:password_update' %}">Change
+                                                                        Password</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="{% url 'userauths:sign_out' %}">Sign Out</a>
+                                                                    <a href="{% url 'userauths:sign_out' %}">Sign
+                                                                        Out</a>
                                                                 </li>
                                                             </ul>
                                                         </li>
                                                         <li>
-                                                            <a href="{% url 'userauths:user_profile_update' %}">My Profile</a>
+                                                            <a href="{% url 'userauths:user_profile_update' %}">My
+                                                                Profile</a>
                                                         </li>
                                                     </ul>
                                                 </li>
                                                 <li class="has-dropdown has-dropdown--ul-left-100">
-                                                    <a>Shop 
+                                                    <a>Shop
                                                         <i class="fas fa-angle-down i-state-right u-s-m-l-6"></i>
                                                     </a>
                                                     <span class="js-menu-toggle"></span>
@@ -302,7 +315,7 @@
 
                                             </ul>
                                         </li>
-                                        
+
                                         <li>
                                             <a href="">VALUE OF THE DAY</a>
                                         </li>
@@ -883,7 +896,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js"></script>
     <!-- Owl Carousel CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
     <!-- Owl Carousel JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 
@@ -905,7 +919,7 @@
         </div>
     </noscript>
     <script>
-        document.addEventListener("click", function(event) {
+        document.addEventListener("click", function (event) {
             fetch('/analytics/track-click/', {
                 method: "POST",
                 body: JSON.stringify({
@@ -920,7 +934,7 @@
             });
         });
     </script>
-    
+
 
 </body>
 
