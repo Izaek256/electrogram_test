@@ -22,6 +22,10 @@ ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
 CSRF_TRUSTED_ORIGINS = [
     "https://puny-arliene-izaek256-a7c8f3da.koyeb.app",
 ]
+# If you're using CORS
+CORS_ALLOWED_ORIGINS = [
+    'https://puny-arliene-izaek256-a7c8f3da.koyeb.app',
+]
 
 
 
