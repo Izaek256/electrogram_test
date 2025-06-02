@@ -1,0 +1,122 @@
+{% load static %}
+{% load humanize %}
+
+<div class="shop-p__collection position-relative">
+    <!-- Product Grid Loader - Using HTMX's built-in indicator functionality -->
+    <div id="product-grid-loader" class="htmx-indicator" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.8); z-index: 1000; min-height: 300px; pointer-events: none;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <div style="background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.1); text-align: center;">
+                <i class="fas fa-spinner fa-spin fa-3x" style="color: #ff4500; margin-bottom: 10px;"></i>
+                <div style="font-weight: bold; color: #333;">Loading products...</div>
+            </div>
+        </div>
+    </div>
+    <div class="row is-grid-active">
+        {% for product in products %}
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="product-m">
+                <div class="product-m__thumb">
+                    <a class="aspect aspect--bg-grey aspect--square u-d-block"
+                        href="{% url 'base:product-detail' slug=product.slug %}">
+                        <img class="aspect__img" src="{{ product.get_image_url }}"
+                            alt="{{ product.title }}"></a>
+                    <div class="product-m__add-cart">
+                        <button class="btn btn--e-brand-b-2 add-to-cart-btn" id="addCart" type="button"
+                            value="{{ product.id }}" data-product-id="{{ product.id }}">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-m__content">
+                    <div class="product-m__category">
+                        <a href="{% url 'base:product_category_list' product.category.cid %}">
+                            {{product.category.title }}</a>
+                    </div>
+                    <div class="product-m__name">
+                        <a href="{% url 'base:product-detail' product.slug %}">{{ product.title}}
+                            </a>
+                    </div>
+                    <br>
+                    <div class="product-m__price">Ugx. {{ product.price|intcomma}} /=</div>
+                    <div class="pd-detail__inline">
+                        <span class="pd-detail__stock">{{ product.stock }} in stock</span>
+                        {% if product.stock <= 5 %}
+                        <span class="pd-detail__left">Only {{ product.stock }} left</span>
+                        {% endif %}
+                        {% if product.tags.all %}
+                        {% for tag in product.tags.all %}
+                        <span class="pd-detail__tag" data-tag="{{ tag.name }}">{{ tag.name }}</span>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="u-s-p-y-60">
+    <!--====== Pagination ======-->
+    <nav class="pagination-container" aria-label="Page navigation">
+        <ul class="pagination">
+            {% if products.has_other_pages %}
+            {% if products.has_previous %}
+            <li class="page-item">
+                <a class="page-link first" hx-get="?{% for k,v in request.GET.items %}{% if k != 'page' %}{{k}}={{v}}&{% endif %}{% endfor %}page=1" hx-target="#product-grid" hx-push-url="true" hx-indicator="#product-grid-loader" aria-label="First">
+                    <span aria-hidden="true">«</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link prev" hx-get="?{% for k,v in request.GET.items %}{% if k != 'page' %}{{k}}={{v}}&{% endif %}{% endfor %}page={{ products.previous_page_number }}" hx-target="#product-grid" hx-push-url="true" hx-indicator="#product-grid-loader" aria-label="Previous">
+                    <span aria-hidden="true">‹</span>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in products.paginator.page_range %}
+            {% if num == products.number %}
+            <li class="page-item active">
+                <span class="page-link">{{ num }}</span>
+            </li>
+            {% elif num > products.number|add:-3 and num < products.number|add:3 %}
+            <li class="page-item">
+                <a class="page-link" hx-get="?{% for k,v in request.GET.items %}{% if k != 'page' %}{{k}}={{v}}&{% endif %}{% endfor %}page={{ num }}" hx-target="#product-grid" hx-push-url="true" hx-indicator="#product-grid-loader">{{ num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+
+            {% if products.has_next %}
+            <li class="page-item">
+                <a class="page-link next" hx-get="?{% for k,v in request.GET.items %}{% if k != 'page' %}{{k}}={{v}}&{% endif %}{% endfor %}page={{ products.next_page_number }}" hx-target="#product-grid" hx-push-url="true" hx-indicator="#product-grid-loader" aria-label="Next">
+                    <span aria-hidden="true">›</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link last" hx-get="?{% for k,v in request.GET.items %}{% if k != 'page' %}{{k}}={{v}}&{% endif %}{% endfor %}page={{ products.paginator.num_pages }}" hx-target="#product-grid" hx-push-url="true" hx-indicator="#product-grid-loader" aria-label="Last">
+                    <span aria-hidden="true">»</span>
+                </a>
+            </li>
+            {% endif %}
+            {% endif %}
+        </ul>
+    </nav>
+    <!--====== End - Pagination ======-->
+</div>
+
+<script>
+// Ensure the product grid loader is properly initialized
+document.addEventListener('DOMContentLoaded', function() {
+    // Make sure the loader exists and is properly styled
+    const loader = document.getElementById('product-grid-loader');
+    if (loader) {
+        // Reset any styles that might be interfering
+        loader.style.display = 'none';
+        loader.style.position = 'absolute';
+        loader.style.top = '0';
+        loader.style.left = '0';
+        loader.style.right = '0';
+        loader.style.bottom = '0';
+        loader.style.backgroundColor = 'rgba(255,255,255,0.8)';
+        loader.style.zIndex = '1000';
+        loader.style.minHeight = '300px';
+    }
+});
+</script>

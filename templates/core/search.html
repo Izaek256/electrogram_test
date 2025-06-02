@@ -1,0 +1,352 @@
+{% extends 'partials/basenext.html' %} 
+{% load static %}
+
+{% block content %}
+
+
+<!--====== App Content ======-->
+<div class="app-content">
+    <div class="u-s-p-y-60">
+    <!--====== Section Content ======-->
+    <div class="section__content">
+        <div class="container">
+            <div class="breadcrumb">
+                <div class="breadcrumb__wrap">
+                    <ul class="breadcrumb__list">
+                        <li class="has-separator">
+                            <a href="{% url 'base:index' %}">Home</a>
+                        </li>
+                        <li class="has-separator">
+                            <a href="{% url 'base:product_list' %}">Shop</a>
+                        </li>
+                        <li class="is-marked">
+                            <a >Searched for: {{ query }}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <!--====== Section 1 ======-->
+    <div class="u-s-p-y-90">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="shop-p">
+                        <!-- Search Header -->
+                        <div class="search-header u-s-m-b-30">
+                            <div class="search-header__content">
+                                <h1 class="search-header__title">
+                                    {% if query %}
+                                        Search Results for "{{ query }}"
+                                    {% else %}
+                                        Search
+                                    {% endif %}
+                                </h1>
+                                {% if products %}
+                                    <p class="search-header__count">
+                                        Found {{ products.paginator.count }} result{{ products.paginator.count|pluralize }}
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- View Toggle -->
+                        <div class="shop-p__toolbar u-s-m-b-30">
+                            <div class="shop-p__tool-style">
+                                <div class="tool-style__group u-s-m-b-8">
+                                    <span class="js-shop-grid-target is-active">Grid</span>
+                                    <span class="js-shop-list-target">List</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% csrf_token %}
+                        {% if not products and query %}
+                            <!-- No Results -->
+                            <div class="shop-p__collection">
+                                <div class="not-found-container text-center" style="padding: 50px 0;">
+                                    <div class="not-found-icon" style="font-size: 60px; color: #ccc; margin-bottom: 20px;">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                    <h2 style="margin-bottom: 15px; color: #444;">No Results Found</h2>
+                                    <p style="color: #666; margin-bottom: 30px;">We couldn't find any products matching "{{ query }}".</p>
+                                    <a href="{% url 'base:index' %}" class="btn btn--e-brand">Return to Homepage</a>
+                                </div>
+                            </div>
+                        {% else %}
+                            {% if products %}
+                                <!-- All Results Section -->
+                                <div class="all-results-section u-s-m-b-30">
+                                    <h2 class="section-heading u-s-m-b-20">All Results</h2>
+                                    <div class="shop-p__collection">
+                                        <div class="row is-grid-active" id="search-results-container">
+                                            {% include 'core/partials/search_results.html' %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if related_products %}
+                                <!-- Related Products Section -->
+                                <div class="related-products-section">
+                                    <h2 class="section-heading u-s-m-b-20">Related Products</h2>
+                                    <div class="row is-grid-active" id="related-products-container">
+                                        {% include 'core/partials/related_products.html' %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    /* Enhanced Product Card Styles */
+    .product-m {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 30px;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .product-m:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .product-m__thumb {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .product-m__thumb img {
+        transition: transform 0.3s ease;
+    }
+
+    .product-m:hover .product-m__thumb img {
+        transform: scale(1.05);
+    }
+
+    .product-m__quick-look,
+    .product-m__add-cart {
+        position: absolute;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .product-m:hover .product-m__quick-look,
+    .product-m:hover .product-m__add-cart {
+        opacity: 1;
+    }
+
+    .product-m__quick-look {
+        top: 10px;
+        right: 10px;
+        background: rgba(255,255,255,0.9);
+        padding: 8px;
+        border-radius: 50%;
+    }
+
+    .product-m__add-cart {
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255,255,255,0.9);
+        padding: 10px;
+        text-align: center;
+    }
+
+    .product-m__content {
+        padding: 15px;
+    }
+
+    .product-m__name {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 10px 0;
+        line-height: 1.4;
+    }
+
+    .product-m__name a {
+        color: #333;
+    }
+
+    .product-m__name a:hover {
+        color: #ff4500;
+    }
+
+    .product-m__price {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #ff4500;
+        margin: 10px 0;
+    }
+
+    .product-m__rating {
+        color: #ffc107;
+        margin: 5px 0;
+    }
+
+    /* Best Match Section Styles */
+    .best-match-section {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+
+    .best-match-section .product-m {
+        margin-bottom: 0;
+    }
+
+    /* Search Header Styles */
+    .search-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .search-header__title {
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .search-header__count {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    /* Pagination Styles */
+    .shop-p__pagination {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        padding: 0;
+        margin: 40px 0;
+        flex-wrap: wrap;
+    }
+
+    .shop-p__pagination li {
+        margin: 0 5px;
+    }
+
+    .shop-p__pagination a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        color: #666;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .shop-p__pagination li.is-active a {
+        background: #ff4500;
+        color: #fff;
+        border-color: #ff4500;
+    }
+
+    .shop-p__pagination a:hover {
+        background: #ff4500;
+        color: #fff;
+        border-color: #ff4500;
+    }
+
+    .shop-p__pagination .fas {
+        font-size: 14px;
+    }
+
+    /* Ensure pagination is visible */
+    .u-s-p-y-60 {
+        padding-top: 60px;
+        padding-bottom: 60px;
+        width: 100%;
+        display: block;
+    }
+
+    /* Responsive pagination */
+    @media (max-width: 576px) {
+        .shop-p__pagination {
+            margin: 20px 0;
+        }
+        
+        .shop-p__pagination li {
+            margin: 0 2px;
+        }
+        
+        .shop-p__pagination a {
+            width: 35px;
+            height: 35px;
+        }
+    }
+
+    /* View Toggle Styles */
+    .shop-p__tool-style {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 20px;
+    }
+
+    .tool-style__group span {
+        padding: 8px 15px;
+        cursor: pointer;
+        border: 1px solid #ddd;
+        margin-left: 5px;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .tool-style__group span.is-active {
+        background: #ff4500;
+        color: #fff;
+        border-color: #ff4500;
+    }
+</style>
+{% endblock content %}
+
+{% block extrajs %}
+<script>
+    // Toggle between grid and list view
+    document.addEventListener('DOMContentLoaded', function() {
+        const gridBtn = document.querySelector('.js-shop-grid-target');
+        const listBtn = document.querySelector('.js-shop-list-target');
+        const productContainers = document.querySelectorAll('.shop-p__collection > div');
+        
+        gridBtn.addEventListener('click', function() {
+            gridBtn.classList.add('is-active');
+            listBtn.classList.remove('is-active');
+            productContainers.forEach(container => {
+                container.classList.add('is-grid-active');
+                container.classList.remove('is-list-active');
+            });
+        });
+        
+        listBtn.addEventListener('click', function() {
+            listBtn.classList.add('is-active');
+            gridBtn.classList.remove('is-active');
+            productContainers.forEach(container => {
+                container.classList.add('is-list-active');
+                container.classList.remove('is-grid-active');
+            });
+        });
+    });
+
+    // Add loading indicator for HTMX requests
+    document.body.addEventListener('htmx:beforeRequest', function(evt) {
+        const target = evt.detail.target;
+        target.classList.add('loading');
+    });
+
+    document.body.addEventListener('htmx:afterRequest', function(evt) {
+        const target = evt.detail.target;
+        target.classList.remove('loading');
+    });
+</script>
+{% endblock %}

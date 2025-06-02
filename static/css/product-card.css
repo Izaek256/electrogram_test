@@ -1,0 +1,39 @@
+.product-m__thumb {
+    text-align: center;
+    position: relative;
+}
+
+.product-m__thumb .btn--e-brand {
+    display: block;
+    margin: 10px auto;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.product-m__price {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.product-m__content {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.product-m__category a {
+    color: #666;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.product-m__category a:hover {
+    color: #333;
+}

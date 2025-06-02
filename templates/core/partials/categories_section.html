@@ -1,0 +1,172 @@
+{% load static %}
+
+<div class="categories-section">
+    <!-- Mobile Categories Carousel -->
+    <div class="categories-carousel d-md-none">
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                {% for category in categories %}
+                <div class="swiper-slide">
+                    <div class="category-card">
+                        <div class="aspect aspect--bg-grey aspect--square">
+                            <img class="aspect__img" src="{{ category.get_image_url }}" alt="{{ category.title }}">
+                        </div>
+                        <div class="category-card__content">
+                            <a class="category-card__link btn--e-white-brand" 
+                               href="{% url 'base:product_category_list' category.cid %}">
+                                {{ category.title }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <!-- Add Navigation -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <!-- Add Pagination -->
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+
+    <!-- Desktop Categories Grid -->
+    <div class="categories-grid d-none d-md-block">
+        <div class="row">
+            {% for category in categories %}
+            <div class="col-lg-2 col-md-4 col-sm-6 u-s-m-b-30">
+                <div class="promotion-o">
+                    <div class="aspect aspect--bg-grey aspect--square">
+                        <img class="aspect__img" src="{{ category.get_image_url }}" alt="{{ category.title }}">
+                    </div>
+                    <div class="promotion-o__content">
+                        <a class="promotion-o__link btn--e-white-brand"
+                           href="{% url 'base:product_category_list' category.cid %}">
+                            {{ category.title }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+.categories-section {
+    position: relative;
+    padding: 20px 0;
+}
+
+/* Mobile Carousel Styles */
+.categories-carousel {
+    position: relative;
+    padding: 0 40px;
+}
+
+.category-card {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    margin: 10px;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+}
+
+.category-card__content {
+    padding: 15px;
+    text-align: center;
+}
+
+.category-card__link {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+/* Swiper Navigation Buttons */
+.swiper-button-next,
+.swiper-button-prev {
+    color: #333;
+    background: rgba(255, 255, 255, 0.9);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+    font-size: 16px;
+}
+
+/* Desktop Grid Styles */
+.categories-grid {
+    margin: 0 -15px;
+}
+
+.promotion-o {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    margin-bottom: 30px;
+}
+
+.promotion-o:hover {
+    transform: translateY(-5px);
+}
+
+.promotion-o__content {
+    padding: 15px;
+    text-align: center;
+}
+
+.promotion-o__link {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Swiper for mobile
+    if (window.innerWidth < 768) {
+        const swiper = new Swiper('.swiper-container', {
+            slidesPerView: 1,
+            spaceBetween: 20,
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            on: {
+                slideChange: function() {
+                    // Update pagination state if needed
+                    const activeIndex = this.realIndex + 1;
+                    const pageLinks = document.querySelectorAll('.pagination .page-link');
+                    pageLinks.forEach(link => {
+                        link.parentElement.classList.remove('active');
+                        if (link.getAttribute('data-page') == activeIndex) {
+                            link.parentElement.classList.add('active');
+                        }
+                    });
+                }
+            }
+        });
+    }
+});
+</script> 

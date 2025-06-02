@@ -1,0 +1,148 @@
+{%extends 'partials/basenext.html' %} {% load static %} {% block content %} {% load socialaccount %}
+
+
+<!--====== Main App ======-->
+<div id="app">
+    <!--====== Main Header ======-->
+
+    <!--====== End - Main Header ======-->
+
+    <!--====== App Content ======-->
+    <div class="app-content">
+        <!--====== Section 1 ======-->
+        <div class="u-s-p-y-60">
+            <!--====== Section Content ======-->
+            <div class="section__content">
+                <div class="container">
+                    <div class="breadcrumb">
+                        <div class="breadcrumb__wrap">
+                            <ul class="breadcrumb__list">
+                                <li class="has-separator">
+                                    <a href="{% url 'base:index'  %}">Home</a>
+                                </li>
+                                <li class="has-separator">
+                                    <a href="{% url 'base:product_list' %}">Shop</a>
+                                </li>
+                                <li class="is-marked">
+                                    <a href="{% url 'userauths:sign_up'  %}">Signup</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--====== End - Section 1 ======-->
+
+        <!--====== Section 2 ======-->
+        <div class="u-s-p-b-60">
+            <!--====== Section Intro ======-->
+            <div class="section__intro u-s-m-b-60">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="section__text-wrap">
+                                <h1 class="section__heading u-c-secondary">
+                                    CREATE AN ACCOUNT
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--====== End - Section Intro ======-->
+
+            <!--====== Section Content ======-->
+            <div class="section__content">
+                <div class="container">
+                    <div class="row row--center">
+                        <div class="col-lg-6 col-md-8 u-s-m-b-30">
+                            <div class="l-f-o">
+
+                                {% if form.username.errors %}
+                                <div class="error-message">
+                                    {{ form.username.errors }}
+                                </div>
+                                {% endif %}
+                                {% if form.email.errors %}
+                                <div class="error-message">
+                                    {{ form.email.errors }}
+                                </div>
+                                {% endif %}
+                                {% if form.password1.errors %}
+                                <div class="error-message">
+                                    {{ form.password1.errors }}
+                                </div>
+                                {% endif %}
+                                {% if form.password2.errors %}
+                                <div class="error-message">
+                                    {{ form.password2.errors }}
+                                </div>
+                                {% endif %}
+                                <div class="l-f-o__pad-box">
+                                    <h1 class="gl-h1">PERSONAL INFORMATION</h1>
+                                    <form class="l-f-o__form" method="post" id="signup-form"
+                                        action="{% url 'userauths:sign_up' %}">
+                                        {% csrf_token %}
+
+                                        {{ form.as_p }}
+
+                                        <div class="u-s-m-b-15">
+                                            <button class="btn btn--e-transparent-brand-b-2" type="submit" id="register-btn">
+                                                <span class="btn-loader"></span>
+                                                <span class="btn-text">REGISTER</span>
+                                            </button>
+                                        </div>
+                                        <a href="{% url 'userauths:sign_in' %}" class="l-f-o__link">
+                                            <p class="gl-link">Already have an account? Sign in</p>
+                                        </a>
+                                        <br><br>
+                                        <div class="gl-s-api">
+                                            <div class="u-s-m-b-30">
+                                                <a href="{% provider_login_url 'google' %}">
+                                                    <button class="gl-s-api__btn gl-s-api__btn--gplus" type="button">
+                                                        <i class="fab fa-google"></i>
+                                                        <span>Continue with Google</span>
+                                                    </button>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--====== End - Section Content ======-->
+        </div>
+        <!--====== End - Section 2 ======-->
+    </div>
+    <!--====== End - App Content ======-->
+
+    <!--====== Main Footer ======-->
+    {% if messages %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            {% for message in messages %}
+            alertify.{ { message.tags } } ("{{ message }}");
+            {% endfor %}
+        });
+    </script>
+    {% endif %}
+
+    {% if form.errors %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+            alertify.error("{{ error }}");
+            {% endfor %}
+            {% endfor %}
+        });
+    </script>
+    {% endif %}
+</div>
+    <!-- Button loader functionality is now handled by app2.js -->
+{% endblock content %}

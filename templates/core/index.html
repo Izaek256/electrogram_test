@@ -1,0 +1,681 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% load humanize %}
+{% csrf_token %}
+
+{% block content %}
+<!-- Add Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<!-- Display messages -->
+{% if messages %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% for message in messages %}
+        alertify.{{ message.tags|lower }}('{{ message|escapejs }}');
+        {% endfor %}
+    });
+</script>
+{% endif %}
+<!--====== App Content ======-->
+<div class="app-content">
+
+    <!--====== Primary Slider ======-->
+    <div class="s-skeleton s-skeleton--h-640 s-skeleton--bg-grey">
+        <div class="owl-carousel primary-style-3" id="hero-slider">
+            <div class="hero-slide hero-slide--7">
+                <div class="primary-style-3-wrap">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="slider-content slider-content--animation">
+
+                                    <span class="content-span-1 u-c-white">Update Your Fashion</span>
+
+                                    <span class="content-span-2 u-c-white">10% Discount on Outwear</span>
+
+                                    <span class="content-span-3 u-c-white">Find outwear on best prices</span>
+
+                                    <span class="content-span-4 u-c-white">Starting At
+
+                                        <span class="u-c-brand">$100.00</span></span>
+
+                                    <a class="shop-now-link btn--e-brand" href="{% url 'base:product_list' %}">SHOP NOW</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-slide hero-slide--8">
+                <div class="primary-style-3-wrap">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="slider-content slider-content--animation">
+
+                                    <span class="content-span-1 u-c-white">Open Your Eyes</span>
+
+                                    <span class="content-span-2 u-c-white">10% Off On Intimates</span>
+
+                                    <span class="content-span-3 u-c-white">Find intimates on best prices</span>
+
+                                    <span class="content-span-4 u-c-white">Starting At
+
+                                        <span class="u-c-brand">$100.00</span></span>
+
+                                    <a class="shop-now-link btn--e-brand" href="{% url 'base:product_list' %}">SHOP NOW</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-slide hero-slide--9">
+                <div class="primary-style-3-wrap">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="slider-content slider-content--animation">
+
+                                    <span class="content-span-1 u-c-white">Find Top Brands</span>
+
+                                    <span class="content-span-2 u-c-white">10% Off On Outwear</span>
+
+                                    <span class="content-span-3 u-c-white">Find outwear on best prices</span>
+
+                                    <span class="content-span-4 u-c-white">Starting At
+
+                                        <span class="u-c-brand">$100.00</span></span>
+
+                                    <a class="shop-now-link btn--e-brand" href="{% url 'base:product_list' %}">SHOP NOW</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--====== End - Primary Slider ======-->
+
+    <!--====== Section 1 ======-->
+    <div class="u-s-p-y-60">
+        <!--====== Section Content ======-->
+        <div class="section__content" data-section-container="categories">
+            <div class="container">
+                <!-- Desktop Grid Layout -->
+                <div class="category-grid d-none d-md-block">
+                    <div class="swiper category-carousel-desktop">
+                        <div class="swiper-wrapper">
+                            {% for category in categories %}
+                            <div class="swiper-slide">
+                                <div class="promotion-o">
+                                    <div class="aspect aspect--bg-grey aspect--square">
+                                        <img class="aspect__img" src="{{ category.get_image_url }}" alt="{{category.title }}">
+                                    </div>
+                                    <div class="promotion-o__content">
+                                        <a class="promotion-o__link btn--e-white-brand"
+                                            href="{% url 'base:product_category_list' category.cid %}">{{category.title }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <!-- Add Navigation -->
+                        <div class="swiper-button-next desktop-swiper-next"></div>
+                        <div class="swiper-button-prev desktop-swiper-prev"></div>
+                        <!-- Add Pagination -->
+                         <br>
+                        <div class="swiper-pagination desktop-swiper-pagination"></div>
+                    </div>
+                </div>
+                
+                <!-- Mobile Carousel Layout -->
+                <div class="d-md-none">
+                    <div class="swiper category-carousel-mobile">
+                        <div class="swiper-wrapper">
+                            {% for category in categories %}
+                            <div class="swiper-slide category-slide">
+                                <div class="promotion-o">
+                                    <div class="aspect aspect--bg-grey aspect--square">
+                                        <img class="aspect__img" src="{{ category.get_image_url }}" alt="{{category.title }}">
+                                    </div>
+                                    <div class="promotion-o__content">
+                                        <a class="promotion-o__link btn--e-white-brand"
+                                            href="{% url 'base:product_category_list' category.cid %}">{{category.title }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <!-- Add Navigation -->
+                        <div class="swiper-button-next mobile-swiper-next"></div>
+                        <div class="swiper-button-prev mobile-swiper-prev"></div>
+                        <!-- Add Pagination -->
+                        <!-- <div class="swiper-pagination mobile-swiper-pagination"></div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--====== End - Section Content ======-->
+    </div>
+    <div class="u-s-p-y-60">
+        <div class="section__content">
+            <div class="container">
+                <div class="breadcrumb">
+                    <div class="breadcrumb__wrap">
+                        <ul class="breadcrumb__list">
+                            <li class="breadcrumb__item">
+                                <a class="breadcrumb__link" href="{% url 'base:product_list' %}">
+                                    SHOP NOW
+                                    <span class="breadcrumb__arrow" aria-hidden="true">→</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--====== End - Section 1 ======-->
+
+    <!--====== Section 2 ======-->
+    <div class="u-s-p-b-60" id="section__content">
+        <!--====== Section Content ======-->
+        <div class="section__content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-12">
+                        <a class="i3-banner" href="shop-side-version-2.html">
+                            <div class="aspect aspect--bg-grey-fb aspect--square">
+                                <img class="aspect__img i3-banner__img"
+                                    src="{% static 'images/banners/i3-banner-1.jpg' %}" alt="">
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-lg-6 col-md-12">
+                        <div class="daily-offer-section" data-section-container="daily-offer"
+                            hx-get="{% url 'base:index' %}?section=daily-offer"
+                            hx-trigger="load"
+                            hx-target="[data-section-container='daily-offer']"
+                            hx-swap="innerHTML">
+                            {% include 'core/partials/daily_offer_products.html' with products=daily_offer_products section='daily-offer' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--====== End - Section Content ======-->
+    </div>
+    <!--====== End - Section 2 ======-->
+
+
+    <!--====== Section 3 ======-->
+    <div class="u-s-p-b-60">
+
+        <!--====== Section Intro ======-->
+        <div class="section__intro u-s-m-b-46">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="section__text-wrap">
+                            <h1 class="section__heading u-c-secondary u-s-m-b-12">RECENT PRODUCTS</h1>
+
+                            <span class="section__span u-c-silver">NEWLY ADDED PRODUCTS</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--====== End - Section Intro ======-->
+
+
+        <!--====== Section Content ======-->
+        <div class="section__content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="recent-products-section" data-section-container="recent-products"
+                            hx-get="{% url 'base:index' %}?section=recent-products"
+                            hx-trigger="load"
+                            hx-target="[data-section-container='recent-products']"
+                            hx-swap="innerHTML">
+                            {% include 'core/partials/recent_products.html' with products=recent_products section='recent-products' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--====== End - Section Content ======-->
+    </div>
+    <!--====== End - Section 3 ======-->
+
+
+    <!--====== Section 4 ======-->
+    <div class="u-s-p-b-60">
+
+        <!--====== Section Intro ======-->
+        <div class="section__intro u-s-m-b-16">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="section__text-wrap">
+                            <h1 class="section__heading u-c-secondary u-s-m-b-12">BEST SELLING PRODUCT</h1>
+
+                            <span class="section__span u-c-silver u-s-m-b-16">FIND PRODUCTS THAT ARE MOST SELLING</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--====== End - Section Intro ======-->
+
+
+        <!--====== Section Content ======-->
+        <div class="section__content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="best-selling-section" data-section-container="best-selling"
+                            hx-get="{% url 'base:index' %}?section=best-selling"
+                            hx-trigger="load"
+                            hx-target="[data-section-container='best-selling']"
+                            hx-swap="innerHTML">
+                            {% include 'core/partials/best_selling_products.html' with products=best_selling_products section='best-selling' %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!--====== End - Section Content ======-->
+    </div>
+    <!--====== End - Section 4 ======-->
+
+
+    <!--====== Section 5 ======-->
+    <div class="u-s-p-b-60">
+
+        <!--====== Section Intro ======-->
+        <div class="section__intro u-s-m-b-46">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="section__text-wrap">
+                            <h1 class="section__heading u-c-secondary u-s-m-b-12">PRODUCTS OF THE MONTH</h1>
+
+                            <span class="section__span u-c-silver">RECENTLY  PRODUCTS</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--====== End - Section Intro ======-->
+
+
+        <!--====== Section Content ======-->
+        <div class="section__content" ">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="monthly-products-section" data-section-container="monthly-products"
+                            hx-get="{% url 'base:index' %}?section=monthly-products"
+                            hx-trigger="load"
+                            hx-target="[data-section-container='monthly-products']"
+                            hx-swap="innerHTML">
+                            {% include 'core/partials/monthly_products.html' with products=monthly_products section='monthly-products' %}
+                        </div>
+                    </div>
+                    <!-- Pagination Controls -->
+                    <div class="col-12">
+                        <nav aria-label="Page navigation" class="d-flex justify-content-center mt-4" data-section="monthly-products">
+                            <div class="pagination-container">
+                                <ul class="pagination">
+                                    {% if monthly_products.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" 
+                                               hx-get="{% url 'base:index' %}?section=monthly-products&page={{ monthly_products.previous_page_number }}"
+                                               hx-target=".products-container"
+                                               hx-indicator="#monthly-products-loader"
+                                               hx-swap="innerHTML">&laquo;</a>
+                                        </li>
+                                    {% endif %}
+                                    
+                                    {% for num in monthly_products.paginator.page_range %}
+                                        <li class="page-item {% if monthly_products.number == num %}active{% endif %}">
+                                            <a class="page-link" 
+                                               hx-get="{% url 'base:index' %}?section=monthly-products&page={{ num }}"
+                                               hx-target=".products-container"
+                                               hx-indicator="#monthly-products-loader"
+                                               hx-swap="innerHTML">{{ num }}</a>
+                                        </li>
+                                    {% endfor %}
+                                    
+                                    {% if monthly_products.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" 
+                                               hx-get="{% url 'base:index' %}?section=monthly-products&page={{ monthly_products.next_page_number }}"
+                                               hx-target=".products-container"
+                                               hx-indicator="#monthly-products-loader"
+                                               hx-swap="innerHTML">&raquo;</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--====== End - Section 5 ======-->
+
+
+    <!--====== Section 6 ======-->
+    <div class="u-s-p-b-60">
+
+        <!--====== Section Content ======-->
+        <div class="section__content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 col-sm-6 u-s-m-b-30">
+                        <div class="column-product">
+
+                            <span class="column-product__title u-c-secondary u-s-m-b-25">SPECIAL PRODUCTS</span>
+                            <ul class="column-product__list">
+                                {% for product in special_products|slice:":3" %}
+                                <li class="column-product__item">
+                                    <div class="product-l">
+                                        <div class="product-l__img-wrap">
+
+                                            <a class="aspect aspect--bg-grey aspect--square u-d-block product-l__link"
+                                                href="{% url 'base:product-detail' slug=product.slug %}">
+
+                                                <img class="aspect__img" src="{{ product.get_image_url }}"
+                                                    alt="{{ product.title}}"></a>
+                                        </div>
+                                        <div class="product-l__info-wrap">
+
+                                            <span class="product-l__category">
+
+                                                <a
+                                                    href="{% url 'base:product_category_list' product.category.cid %}">{{product.category}}</a></span>
+
+                                            <span class="product-l__name">
+
+                                                <a
+                                                    href="{% url 'base:product-detail' slug=product.slug %}">{{product.title}}</a></span>
+
+                                            <span class="product-l__price">Ugshs. {{product.price |intcomma}}
+                                                /=</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% endfor%}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-6 u-s-m-b-30">
+                        <div class="column-product">
+
+                            <span class="column-product__title u-c-secondary u-s-m-b-25">WEEKLY PRODUCTS</span>
+                            <ul class="column-product__list">
+                                {% for product in weekly_products|slice:":3" %}
+                                <li class="column-product__item">
+                                    <div class="product-l">
+                                        <div class="product-l__img-wrap">
+
+                                            <a class="aspect aspect--bg-grey aspect--square u-d-block product-l__link"
+                                                href="{% url 'base:product-detail' slug=product.slug %}">
+
+                                                <img class="aspect__img" src="{{ product.get_image_url}}"
+                                                    alt="{{ product.title}}"></a>
+                                        </div>
+                                        <div class="product-l__info-wrap">
+
+                                            <span class="product-l__category">
+
+                                                <a
+                                                    href="{% url  'base:product_category_list' product.category.cid %}">{{product.category}}</a></span>
+
+                                            <span class="product-l__name">
+
+                                                <a
+                                                    href="{% url 'base:product-detail' slug=product.slug %}">{{product.title}}</a></span>
+
+                                            <span class="product-l__price">Ugshs. {{product.price |intcomma}}
+                                                /=</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% endfor%}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-6 u-s-m-b-30">
+                        <div class="column-product">
+
+                            <span class="column-product__title u-c-secondary u-s-m-b-25">FLASH PRODUCTS</span>
+                            <ul class="column-product__list">
+                                {% for product in flash_products|slice:":3" %}
+                                <li class="column-product__item">
+                                    <div class="product-l">
+                                        <div class="product-l__img-wrap">
+
+                                            <a class="aspect aspect--bg-grey aspect--square u-d-block product-l__link"
+                                                href="{% url 'base:product-detail' slug=product.slug %}">
+
+                                                <img class="aspect__img" src="{{ product.get_image_url }}"
+                                                    alt="{{ product.title}}"></a>
+                                        </div>
+                                        <div class="product-l__info-wrap">
+
+                                            <span class="product-l__category">
+
+                                                <a
+                                                    href="{% url 'base:product_category_list' product.category.cid %}">{{product.category}}</a></span>
+
+                                            <span class="product-l__name">
+
+                                                <a
+                                                    href="{% url 'base:product-detail' slug=product.slug %}">{{product.title}}</a></span>
+
+                                            <span class="product-l__price">Ugshs. {{product.price |intcomma}}
+                                                /=</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% endfor%}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--====== End - Section Content ======-->
+    </div>
+    <!--====== End - Section 6 ======-->
+
+
+    <!--====== Section 7 ======-->
+    <!-- Brand Slider -->
+<div class="u-s-p-b-60">
+    <div class="section__container">
+        <div class="section__intro u-s-m-b-46">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="section__text-wrap">
+                            <h1 class="section__heading u-c-secondary u-s-m-b-12">OUR BRANDS</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="owl-carousel owl-theme" id="brand-slider">
+            {% for brand in brands %}
+            <div class="brand-slide">
+                <a href="{% url 'base:product_list' %}?brand={{ brand.bid }}" title="{{ brand.title }}">
+                    {% if brand.image %}
+                        <img src="{{ brand.image.url }}" alt="{{ brand.title }}" class="img-fluid">
+                    {% else %}
+                        <div class="brand-name">{{ brand.title }}</div>
+                    {% endif %}
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>No brands available</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- End Brand Slider -->
+</div>
+<!--====== End - Brand Slider ======-->
+
+<!-- Add Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Desktop Swiper
+        let desktopSwiper = null;
+        // Mobile Swiper
+        let mobileSwiper = null;
+
+        function initDesktopSwiper() {
+            if (desktopSwiper) return;
+            const el = document.querySelector('.category-carousel-desktop');
+            if (!el) return;
+            desktopSwiper = new Swiper(el, {
+                slidesPerView: 6,
+                spaceBetween: 20,
+                navigation: {
+                    nextEl: '.desktop-swiper-next',
+                    prevEl: '.desktop-swiper-prev',
+                },
+                pagination: {
+                    el: '.desktop-swiper-pagination',
+                    clickable: true,
+                },
+                autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+                    pauseOnMouseEnter: true
+                },
+                breakpoints: {
+                    1024: {
+                        slidesPerView: 6,
+                        spaceBetween: 20,
+                    },
+                    768: {
+                        slidesPerView: 4,
+                        spaceBetween: 15,
+                    }
+                }
+            });
+        }
+
+        function destroyDesktopSwiper() {
+            if (desktopSwiper) {
+                desktopSwiper.destroy(true, true);
+                desktopSwiper = null;
+            }
+        }
+
+        function initMobileSwiper() {
+            if (mobileSwiper) return;
+            const el = document.querySelector('.category-carousel-mobile');
+            if (!el) return;
+            mobileSwiper = new Swiper(el, {
+                slidesPerView: 1,
+                spaceBetween: 0,
+                centeredSlides: true,
+                loop: true,
+                navigation: {
+                    nextEl: '.mobile-swiper-next',
+                    prevEl: '.mobile-swiper-prev',
+                },
+                pagination: {
+                    el: '.mobile-swiper-pagination',
+                    clickable: true,
+                },
+                autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+                    pauseOnMouseEnter: true
+                }
+            });
+        }
+
+        function destroyMobileSwiper() {
+            if (mobileSwiper) {
+                mobileSwiper.destroy(true, true);
+                mobileSwiper = null;
+            }
+        }
+
+        function handleSwipers() {
+            if (window.innerWidth < 768) {
+                destroyDesktopSwiper();
+                initMobileSwiper();
+            } else {
+                destroyMobileSwiper();
+                initDesktopSwiper();
+            }
+        }
+
+        // Initialize on load
+        handleSwipers();
+
+        // Re-initialize on resize (debounced)
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(handleSwipers, 250);
+        });
+
+        // Initialize Brand Slider with Owl Carousel
+        $(document).ready(function() {
+            const $brandSlider = $('#brand-slider');
+            
+            if ($brandSlider.length) {
+                $brandSlider.owlCarousel({
+                    loop: true,
+                    margin: 10,
+                    nav: false,
+                    dots: false,
+                    autoplay: true,
+                    autoplayTimeout: 3000,
+                    autoplayHoverPause: false,
+                    responsive: {
+                        0: {
+                            items: 2
+                        },
+                        576: {
+                            items: 3
+                        },
+                        768: {
+                            items: 4
+                        },
+                        992: {
+                            items: 5
+                        },
+                        1200: {
+                            items: 6
+                        }
+                    }
+                });
+                
+                // Remove any existing brand slider navigation
+                $('.brand-slider-nav').remove();
+            }
+        });
+    });
+</script>
+
+<!-- Add HTMX -->
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+{% endblock content %}

@@ -1,0 +1,83 @@
+{% csrf_token %}
+{% for product in related_products %}
+    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 u-s-m-b-30">
+        <div class="product-m">
+            <div class="product-m__thumb">
+                <a class="aspect aspect--bg-grey aspect--square u-d-block" href="{% url 'base:product-detail' product.slug %}">
+                    <img class="aspect__img" src="{{ product.get_image_url }}" alt="{{ product.title }}">
+                </a>
+                <div class="product-m__quick-look">
+                    <a class="fas fa-search" data-modal="modal" data-modal-id="#quick-look" data-tooltip="tooltip" data-placement="top" title="Quick Look"></a>
+                </div>
+                <div class="product-m__add-cart">
+                    <button class="btn btn--e-brand-b-2 add-to-cart-btn" id="addCart" type="button" value="{{ product.id }}" data-product-id="{{ product.id }}">Add to Cart</button>
+                </div>
+            </div>
+            <div class="product-m__content">
+                <div class="product-m__category">
+                    <a href="{% url 'base:product_category_list' product.category.cid %}">{{ product.category.title }}</a>
+                </div>
+                <div class="product-m__name">
+                    <a href="{% url 'base:product-detail' product.slug %}">{{ product.title }}</a>
+                </div>
+                <div class="product-m__rating gl-rating-style">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span class="product-m__review">(23)</span>
+                </div>
+                <div class="product-m__price">Ugx.{{ product.price }} /=</div>
+                <div class="pd-detail__inline">
+                    <span class="pd-detail__stock">{{ product.stock }} in stock</span>
+                    {% if product.stock <= 5 %}
+                    <span class="pd-detail__left">Only {{ product.stock }} left</span>
+                    {% endif %}
+                    {% if product.tags.all %}
+                    {% for tag in product.tags.all %}
+                    <span class="pd-detail__tag" data-tag="{{ tag.name }}">{{ tag.name }}</span>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+{% if related_products.has_other_pages %}
+<div class="col-12">
+    <div class="shop-p__pagination">
+        {% if related_products.has_previous %}
+            <a class="fas fa-angle-left" 
+               hx-get="{% url 'base:search' %}?q={{ query }}&related_page={{ related_products.previous_page_number }}"
+               hx-target="#related-products-container"
+               hx-swap="innerHTML"
+               hx-push-url="true"></a>
+        {% endif %}
+
+        {% for num in related_products.paginator.page_range %}
+            {% if related_products.number == num %}
+                <li class="is-active">
+                    <a>{{ num }}</a>
+                </li>
+            {% elif num > related_products.number|add:'-3' and num < related_products.number|add:'3' %}
+                <li>
+                    <a hx-get="{% url 'base:search' %}?q={{ query }}&related_page={{ num }}"
+                       hx-target="#related-products-container"
+                       hx-swap="innerHTML"
+                       hx-push-url="true">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if related_products.has_next %}
+            <a class="fas fa-angle-right"
+               hx-get="{% url 'base:search' %}?q={{ query }}&related_page={{ related_products.next_page_number }}"
+               hx-target="#related-products-container"
+               hx-swap="innerHTML"
+               hx-push-url="true"></a>
+        {% endif %}
+    </div>
+</div>
+{% endif %} 

@@ -1,0 +1,74 @@
+<!-- Side Filter Component -->
+<div id="side-filter" class="s-filter">
+    <div class="s-filter__head">
+        <div class="s-filter__head-wrap">
+            <span class="s-filter__h">Filter</span>
+            <a class="s-filter__close" href="javascript:void(0)"></a>
+        </div>
+    </div>
+    <div class="s-filter__body">
+        <!-- Categories Section -->
+        <div class="u-s-m-b-30">
+            <div class="shop-w">
+                <div class="shop-w__intro-wrap">
+                    <h1 class="shop-w__h">CATEGORY</h1>
+                    <span class="fas fa-minus shop-w__toggle" data-target="#s-category" data-toggle="collapse"></span>
+                </div>
+                <div class="shop-w__wrap collapse show" id="s-category">
+                    <ul class="shop-w__category-list gl-scroll">
+                        {% for cat in categories %}
+                        <li class="{% if cat.cid == category.cid %}current{% endif %}">
+                            <a href="{% url 'base:product_category_list' cat.cid %}">{{ cat.title }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Price Range Section -->
+        <div class="u-s-m-b-30">
+            <div class="shop-w">
+                <div class="shop-w__intro-wrap">
+                    <h1 class="shop-w__h">PRICE</h1>
+                    <span class="fas fa-minus shop-w__toggle" data-target="#s-price" data-toggle="collapse"></span>
+                </div>
+                <div class="shop-w__wrap collapse show" id="s-price">
+                    <form class="shop-w__form-p" method="get">
+                        <div class="shop-w__form-p-wrap">
+                            <div>
+                                <label for="price-min">Min</label>
+                                <input class="input-text input-text--primary-style" type="text" id="price-min" name="min_price" placeholder="Min">
+                            </div>
+                            <div>
+                                <label for="price-max">Max</label>
+                                <input class="input-text input-text--primary-style" type="text" id="price-max" name="max_price" placeholder="Max">
+                            </div>
+                            <div>
+                                <button class="btn btn--icon fas fa-angle-right btn--e-transparent-platinum-b-2" type="submit"></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tags Section -->
+        <div class="u-s-m-b-30">
+            <div class="shop-w">
+                <div class="shop-w__intro-wrap">
+                    <h1 class="shop-w__h">POPULAR TAGS</h1>
+                    <span class="fas fa-minus shop-w__toggle" data-target="#s-tags" data-toggle="collapse"></span>
+                </div>
+                <div class="shop-w__wrap collapse show" id="s-tags">
+                    <div class="shop-w__tag-list">
+                        {% for tag in related_tags %}
+                        <a class="gl-tag btn--e-transparent-hover-brand-b-2" href="#">{{ tag }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Side Filter Component -->

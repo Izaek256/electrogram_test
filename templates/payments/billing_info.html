@@ -1,0 +1,250 @@
+{% extends 'partials/basenext.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+<!--====== App Content ======-->
+<div class="app-content">
+
+    <!--====== Section 1 ======-->
+    <div class="u-s-p-y-60">
+
+        <!--====== Section Content ======-->
+        <div class="section__content">
+            <div class="container">
+                <div class="breadcrumb">
+                    <div class="breadcrumb__wrap">
+                        <ul class="breadcrumb__list">
+                            <li class="has-separator">
+
+                                <a href="{% url 'base:index' %}">Home</a>
+                            </li>
+                            <li class="has-separator">
+                                <a href="{% url 'base:product_list' %}">Shop</a>
+                            </li>
+                            <li class="has-separator">
+
+                                <a href="{% url 'cart:cart' %}">Cart</a>
+                            </li>
+                            <li class="is-marked">
+
+                                <a href="{% url 'payments:billing_info' %}">Billing & Info</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--====== End - Section 1 ======-->
+
+    <!--====== Section 3 ======-->
+    <div class="u-s-p-b-60">
+
+        <!--====== Section Content ======-->
+        <div class="section__content">
+            <div class="container">
+                <div class="checkout-f">
+                    <form action="{% url 'payments:process_order' %}" method="POST" id="order-form">
+                        {% csrf_token %}
+                        <div class="row">
+
+                            <div class="col-lg-6">
+                                <!--====== Delivery Address Form ======-->
+                                <h1 class="checkout-f__h1">ORDER INFORMATION</h1>
+
+                                <div class="o-summary">
+                                    <div class="o-summary__section u-s-m-b-30">
+                                        <div class="o-summary__item-wrap gl-scroll">
+                                            {% if delivery_address %}
+                                            <div class="o-card">
+                                                <div class="o-card__flex">
+                                                    <div class="o-card__info-wrap">
+                                                        <div class="u-s-m-b-30">
+                                                            <label class="gl-label"
+                                                                for="delivery_full_name"><strong>Full
+                                                                    Name:</strong></label>
+                                                            <input type="text" id="delivery_full_name"
+                                                                class="input-text input-text--primary-style input-wide"
+                                                                value="{{ delivery_address.delivery_full_name }}"
+                                                                readonly>
+                                                        </div>
+                                                        <div class="u-s-m-b-30">
+                                                            <label class="gl-label"
+                                                                for="delivery_email"><strong>Email:</strong></label>
+                                                            <input type="email" id="delivery_email"
+                                                                class="input-text input-text--primary-style input-wide"
+                                                                value="{{ delivery_address.delivery_email }}" readonly>
+                                                        </div>
+                                                        <div class="u-s-m-b-30">
+                                                            <label class="gl-label"
+                                                                for="delivery_address"><strong>Address:</strong></label>
+                                                            <input type="text" id="delivery_address"
+                                                                class="input-text input-text--primary-style input-wide"
+                                                                value="{{ delivery_address.delivery_address }}"
+                                                                readonly>
+                                                        </div>
+                                                        <div class="u-s-m-b-30">
+                                                            <label class="gl-label"
+                                                                for="delivery_phone_number"><strong>Phone
+                                                                    Number:</strong></label>
+                                                            <input type="text" id="delivery_phone_number"
+                                                                class="input-text input-text--primary-style input-wide"
+                                                                value="{{ delivery_address.delivery_phone_number }}"
+                                                                readonly>
+                                                        </div>
+                                                        <div class="u-s-m-b-30">
+                                                            <label class="gl-label"
+                                                                for="delivery_city"><strong>City:</strong></label>
+                                                            <input type="text" id="delivery_city"
+                                                                class="input-text input-text--primary-style input-wide"
+                                                                value="{{ delivery_address.delivery_city }}" readonly>
+                                                        </div>
+                                                        <div class="u-s-m-b-30">
+                                                            <label class="gl-label"
+                                                                for="delivery_district"><strong>District:</strong></label>
+                                                            <input type="text" id="delivery_district"
+                                                                class="input-text input-text--primary-style input-wide"
+                                                                value="{{ delivery_address.delivery_district }}"
+                                                                readonly>
+                                                        </div>
+                                                        <div class="u-s-m-b-30">
+                                                            <label class="gl-label"
+                                                                for="details_about_address"><strong>Details:</strong></label>
+                                                            <textarea id="details_about_address"
+                                                                class="input-text input-text--primary-style input-wide"
+                                                                readonly>{{ delivery_address.details_about_address }}</textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br>
+
+                                            {% else %}
+                                            <p>No delivery address found. Please add your address.</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <a href="{% url 'base:delivery_update_info' %}" class="btn btn--e-brand-b-2">Edit
+                                        ORDER INFORMATION</a>
+                                </div>
+                                <!--====== End - Delivery Address Form ======-->
+                            </div>
+
+                            <div class="col-lg-6">
+                                <h1 class="checkout-f__h1">ORDER SUMMARY</h1>
+
+                                <!--====== Order Summary ======-->
+                                <div class="o-summary">
+                                    <div class="o-summary__section u-s-m-b-30">
+                                        <div class="o-summary__item-wrap gl-scroll">
+                                            {% for products in cart_products %}
+                                            <div class="o-card">
+                                                <div class="o-card__flex">
+                                                    <div class="o-card__img-wrap">
+                                                        <img class="u-img-fluid" src="{{ products.get_image_url }}"
+                                                            alt="">
+                                                    </div>
+                                                    <div class="o-card__info-wrap">
+                                                        <span class="o-card__name">
+                                                            <a href="{% url 'base:product-detail' products.pid %}">
+                                                                {{products.title }}</a>
+                                                        </span>
+
+                                                        <span class="o-card__quantity"
+                                                            style="display: flex; align-items: center;">
+                                                            {% for key, value in quantities.items %}
+                                                            {% if key == products.id|slugify %}
+                                                            <input
+                                                                class="input-counter__text input-counter--text-primary-style small-input small-input--smaller"
+                                                                type="text" value="{{ value.quantity }}" data-min="1"
+                                                                data-max="1000" id="select-{{ products.id }}">
+                                                            {% endif %}
+                                                            {% endfor %}
+                                                        </span>
+
+                                                        <span class="o-card__price">Ugshs {{ products.price| intcomma }}
+                                                            /=</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="o-card__actions">
+
+                                                    <a href="{% url 'cart:cart' %}" class="fa-solid fa-arrow-left"></a>
+
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+
+                                    <div class="o-summary__section u-s-m-b-30">
+                                        <div class="o-summary__box">
+                                            <table class="o-summary__table">
+                                                <tbody>
+
+                                                    <tr>
+                                                        <td>GRAND TOTAL</td>
+                                                        <td>Ugshs {{ totals |intcomma }} /=</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="o-summary__section u-s-m-b-30">
+                                        <div class="o-summary__box">
+                                            <button id="place-order-btn" class="btn btn--e-brand-b-2" type="submit">
+                                                <span>PLACE ORDER</span>
+                                                <span id="order-spinner" style="display: none; margin-left: 10px;">
+                                                    <i class="fas fa-spinner fa-spin"></i>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--====== End - Order Summary ======-->
+                            </div>
+                    </form>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--====== End - Section Content ======-->
+</div>
+<!--====== End - Section 3 ======-->
+</div>
+<!--====== End - App Content ======-->
+
+<script>
+    // Display Django messages using alertify
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                alertify.success("{{ message }}");
+            {% elif message.tags == 'error' %}
+                alertify.error("{{ message }}");
+            {% elif message.tags == 'info' %}
+                alertify.info("{{ message }}");
+            {% elif message.tags == 'warning' %}
+                alertify.warning("{{ message }}");
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    
+    // Add spinner to the order button when clicked
+    document.getElementById('order-form').addEventListener('submit', function(e) {
+        // Show the spinner
+        document.getElementById('order-spinner').style.display = 'inline-block';
+        
+        // Disable the button to prevent multiple submissions
+        document.getElementById('place-order-btn').disabled = true;
+        
+        // Show processing message
+        alertify.message("Processing your order, please wait...");
+    });
+</script>
+<!--====== Main Footer ======-->
+{% endblock %}

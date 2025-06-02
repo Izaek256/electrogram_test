@@ -1,0 +1,221 @@
+/* Grid and List View Styles */
+
+/* Grid View Styles */
+.product-m {
+    height: 100%;
+    margin-bottom: 30px;
+    transition: all 0.3s;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.product-m:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.product-m__thumb {
+    position: relative;
+    margin-bottom: 1.2rem;
+}
+
+.product-m__thumb img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+.product-m:hover .product-m__thumb img {
+    transform: scale(1.05);
+}
+
+.product-m__content {
+    padding: 15px;
+    text-align: center;
+}
+
+.product-m__category {
+    font-size: 0.875rem;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.product-m__name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.product-m__name a {
+    color: #333;
+    transition: color 0.3s;
+}
+
+.product-m__name a:hover {
+    color: #ff4500;
+}
+
+.product-m__price {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ff4500;
+}
+
+/* Preserve original card size for grid view */
+.products-grid .col-lg-3 {
+    width: 33.333%;
+    padding: 0 15px;
+}
+
+/* List View Styles */
+.products-list .product-m {
+    display: flex;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s;
+    align-items: center;
+}
+
+.products-list .product-m:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.products-list .product-m__thumb {
+    flex: 0 0 20%;
+    max-width: 300px;
+    position: relative;
+    overflow: hidden;
+    margin-right: 2rem;
+}
+
+.products-list .product-m__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.products-list .product-m:hover .product-m__thumb img {
+    transform: scale(1.05);
+}
+
+.products-list .product-m__content {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.products-list .product-m__name {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+}
+
+/* Toggle Buttons Styles */
+.tool-style__group {
+    display: flex;
+    gap: 15px;
+}
+
+.tool-style__group span {
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    color: #777;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+}
+
+.tool-style__group span.is-active {
+    background-color: #ff4500;
+    color: #fff;
+    border-color: #ff4500;
+}
+
+.tool-style__group span:not(.is-active):hover {
+    border-color: #ff4500;
+    color: #ff4500;
+}
+
+/* Shop Collection Container */
+.shop-p__collection .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+/* Products Container */
+.products-container {
+    width: 100%;
+}
+
+/* Loading animation */
+.products-container.loading {
+    position: relative;
+    min-height: 200px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.products-container.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    margin-top: -25px;
+    margin-left: -25px;
+    border-radius: 50%;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Fade-in animation for new content */
+.row-fade-in {
+    animation: fadeIn 0.4s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991px) {
+    .products-list .product-m {
+        flex-direction: column;
+    }
+    
+    .products-list .product-m__thumb {
+        flex: none;
+        max-width: 100%;
+    }
+    
+    .products-grid .col-lg-3 {
+        width: 50%;
+    }
+}
+
+@media (max-width: 767px) {
+    .product-m__content {
+        padding: 10px;
+    }
+    
+    .products-grid .col-lg-3 {
+        width: 100%;
+    }
+} 

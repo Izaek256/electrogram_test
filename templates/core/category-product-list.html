@@ -1,0 +1,365 @@
+{% extends "partials/basenext.html" %}
+{% load humanize %}
+{% load static %}
+
+{% block head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/custom-pagination.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="{% static 'js/pagination-loader.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+<!--====== Section 1 ======-->
+<div class="u-s-p-y-60">
+    <!--====== Section Content ======-->
+    <div class="section__content">
+        <div class="container">
+            <div class="breadcrumb">
+                <div class="breadcrumb__wrap">
+                    <ul class="breadcrumb__list">
+                        <li class="has-separator">
+                            <a href="{% url 'base:index' %}">Home</a>
+                        </li>
+                        <li class="has-separator">
+                            <a href="{% url 'base:product_list' %}">Shop</a>
+                        </li>
+                        <li class="is-marked">
+                            <a href="{% url 'base:product_category_list' category.cid %}">All {{category.title}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="u-s-p-y-90">
+    <div class="container">
+        <div class="row">
+            <!-- Filter Sidebar -->
+            <div class="col-lg-3" id="filter-sidebar" style="display: none;">
+                <div class="shop-w-master">
+                    <h1 class="shop-w-master__heading u-s-m-b-30"><i class="fas fa-filter u-s-m-r-8"></i>FILTERS</h1>
+                    <div class="shop-w-master__sidebar">
+                        <form id="filter-form" hx-get="{% url 'base:product_category_list' category.cid %}" 
+                              hx-target="#products-container" 
+                              hx-trigger="change from:input[type=checkbox], change delay:500ms from:input[type=number]" 
+                              hx-push-url="true"
+                              hx-include="[name='brand'], [name='price_min'], [name='price_max']"
+                              hx-vals='{"filter": "true"}'
+                              hx-indicator="#pagination-loader">
+                            <!-- Filter indicator - using the same style as other loaders -->
+                            <div id="filter-indicator" class="htmx-indicator" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.8); z-index: 1000; min-height: 300px; pointer-events: none;">
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                    <div style="background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.1); text-align: center;">
+                                        <i class="fas fa-spinner fa-spin fa-3x" style="color: #ff4500; margin-bottom: 10px;"></i>
+                                        <div style="font-weight: bold; color: #333;">Applying filters...</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Brand Filter -->
+                            <div class="u-s-m-b-30">
+                                <div class="shop-w">
+                                    <div class="shop-w__intro-wrap">
+                                        <h1 class="shop-w__h">BRAND</h1>
+                                        <span class="fas fa-minus shop-w__toggle" data-target="#brand-filter"></span>
+                                    </div>
+                                    <div class="shop-w__wrap collapse show" id="brand-filter">
+                                        <ul class="shop-w__list gl-scroll">
+                                            {% for brand in brands %}
+                                            <li>
+                                                <div class="check-box">
+                                                    <input type="checkbox" id="brand-{{ brand.id }}" name="brand" value="{{ brand.id }}" 
+                                                           {% if brand.id in selected_brands %}checked{% endif %}>
+                                                    <div class="check-box__state check-box__state--primary">
+                                                        <label class="check-box__label" for="brand-{{ brand.id }}">{{ brand.title }}</label>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Price Range Filter -->
+                            <div class="u-s-m-b-30">
+                                <div class="shop-w">
+                                    <div class="shop-w__intro-wrap">
+                                        <h1 class="shop-w__h">PRICE</h1>
+                                        <span class="fas fa-minus shop-w__toggle" data-target="#price-filter"></span>
+                                    </div>
+                                    <div class="shop-w__wrap collapse show" id="price-filter">
+                                        <div class="range-slider">
+                                            <div class="price-input">
+                                                <div class="field">
+                                                    <span class="shop-w__h">Min</span>
+                                                    <input type="number" name="price_min" id="price-min" value="{{ price_min }}" class="input-text input-text--primary-style">
+                                                </div>
+                                                <div class="separator">-</div>
+                                                <div class="field">
+                                                    <span class="shop-w__h">Max</span>
+                                                    <input type="number" name="price_max" id="price-max" value="{{ price_max }}" class="input-text input-text--primary-style">
+                                                </div>
+                                            </div>
+                                            <div class="u-s-m-b-15">
+                                                <div id="price-range" class="price-range-slider" 
+                                                     data-min="{{ price_range.min_price|default:0 }}" 
+                                                     data-max="{{ price_range.max_price|default:1000000 }}"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Reset Filters Button -->
+                            <div class="u-s-m-b-30">
+                                <button type="button" id="reset-filters" class="btn btn--e-brand-b-2 w-100">RESET FILTERS</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Main Content -->
+            <div class="col-lg-12" id="main-content">
+                <div class="shop-p">
+                    <div class="shop-p__toolbar u-s-m-b-30">
+                        <div class="shop-p__meta-wrap u-s-m-b-60">
+                            <span class="shop-p__meta-text-1">FOUND {{ total_products }} RESULTS</span>
+                            <div class="shop-p__meta-text-2">
+                                <span>Category:</span>
+                                <a class="gl-tag btn--e-brand-shadow" href="#">{{ category.title }}</a>
+                            </div>
+                        </div>
+                        <div class="shop-p__tool-style">
+                            <div class="tool-style__group u-s-m-b-8">
+                                <span class="js-shop-filter-target" id="filter-toggle">Filters</span>
+                                <span class="js-shop-grid-target is-active">Grid</span>
+                                <span class="js-shop-list-target">List</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% csrf_token %}
+                    <div class="shop-p__collection" id="products-container">
+                        {% include 'core/partials/product_card_list.html' with products=products category=category %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--====== End - Section 1 ======-->
+</div>
+
+
+<!--====== End - Section 1 ======-->
+
+<!--====== HTMX Product Section ======-->
+
+{% block extra_styles %}
+<style>
+    /* Price input styling */
+    .price-input {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .price-input .field {
+        display: flex;
+        flex-direction: column;
+        width: 45%;
+    }
+    
+    .price-input .separator {
+        width: 10%;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    
+    .price-input .field span {
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+    
+    .price-input .field input {
+        width: 100%;
+        height: 40px;
+        padding: 0 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    
+    /* Filter buttons styling */
+    .filter-buttons {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .filter-buttons button {
+        flex: 1;
+    }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Include pagination loader script -->
+<script src="{% static 'js/pagination-loader.js' %}"></script>
+<!-- Include function.js for add to cart functionality -->
+<script src="{% static 'js/function.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filter toggle functionality
+        const filterToggle = document.getElementById('filter-toggle');
+        const filterSidebar = document.getElementById('filter-sidebar');
+        const mainContent = document.getElementById('main-content');
+        
+        // Make the filter sidebar visible by default on larger screens
+        const handleFilterVisibility = function() {
+            if (window.innerWidth >= 992) { // Bootstrap lg breakpoint
+                filterSidebar.style.display = 'block';
+                mainContent.classList.remove('col-lg-12');
+                mainContent.classList.add('col-lg-9');
+            }
+        };
+        
+        // Call once on page load
+        handleFilterVisibility();
+        
+        // Also call on window resize
+        window.addEventListener('resize', handleFilterVisibility);
+        
+        filterToggle.addEventListener('click', function() {
+            if (filterSidebar.style.display === 'none') {
+                filterSidebar.style.display = 'block';
+                mainContent.classList.remove('col-lg-12');
+                mainContent.classList.add('col-lg-9');
+            } else {
+                filterSidebar.style.display = 'none';
+                mainContent.classList.remove('col-lg-9');
+                mainContent.classList.add('col-lg-12');
+            }
+        });
+        
+        // Price range slider functionality
+        if (typeof noUiSlider !== 'undefined') {
+            const priceRange = document.getElementById('price-range');
+            const priceMinInput = document.getElementById('price-min');
+            const priceMaxInput = document.getElementById('price-max');
+            
+            // Get values from data attributes to avoid Django template syntax in JS
+            const minPrice = parseInt(priceRange.getAttribute('data-min') || 0);
+            const maxPrice = parseInt(priceRange.getAttribute('data-max') || 1000000);
+            const currentMinPrice = parseInt(priceMinInput.value || minPrice);
+            const currentMaxPrice = parseInt(priceMaxInput.value || maxPrice);
+            
+            noUiSlider.create(priceRange, {
+                start: [currentMinPrice, currentMaxPrice],
+                connect: true,
+                step: 1000,
+                range: {
+                    'min': minPrice,
+                    'max': maxPrice
+                }
+            });
+            
+            // Update input fields when slider changes
+            priceRange.noUiSlider.on('update', function(values, handle) {
+                const value = Math.round(values[handle]);
+                
+                if (handle === 0) {
+                    priceMinInput.value = value;
+                } else {
+                    priceMaxInput.value = value;
+                }
+            });
+            
+            // Update slider when input fields change and trigger form submission
+            priceMinInput.addEventListener('change', function() {
+                priceRange.noUiSlider.set([this.value, null]);
+                showFilterNotification();
+            });
+            
+            priceMaxInput.addEventListener('change', function() {
+                priceRange.noUiSlider.set([null, this.value]);
+                showFilterNotification();
+            });
+            
+            // When slider is changed, trigger the form submission
+            priceRange.noUiSlider.on('change', function() {
+                // Trigger the change event on the input to submit the form
+                priceMinInput.dispatchEvent(new Event('change'));
+            });
+        }
+        
+        // Show notification when filters are updated
+        function showFilterNotification() {
+            if (typeof alertify !== 'undefined') {
+                alertify.success('Filters updated');
+            }
+        }
+        
+        // Add event listener to checkboxes to show notification
+        document.querySelectorAll('input[type="checkbox"]').forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                showFilterNotification();
+            });
+        });
+        
+        // Reset filters button
+        const resetButton = document.getElementById('reset-filters');
+        if (resetButton) {
+            resetButton.addEventListener('click', function() {
+                // Reset checkboxes
+                document.querySelectorAll('input[type="checkbox"]').forEach(function(checkbox) {
+                    checkbox.checked = false;
+                });
+                
+                // Reset price inputs and slider
+                const priceRange = document.getElementById('price-range');
+                const priceMinInput = document.getElementById('price-min');
+                const priceMaxInput = document.getElementById('price-max');
+                
+                if (priceRange && priceRange.noUiSlider) {
+                    const minPrice = parseInt(priceRange.getAttribute('data-min') || 0);
+                    const maxPrice = parseInt(priceRange.getAttribute('data-max') || 1000000);
+                    
+                    priceRange.noUiSlider.set([minPrice, maxPrice]);
+                    priceMinInput.value = minPrice;
+                    priceMaxInput.value = maxPrice;
+                }
+                
+                // Trigger the change event on one of the inputs to submit the form
+                priceMinInput.dispatchEvent(new Event('change'));
+                
+                // Show notification
+                if (typeof alertify !== 'undefined') {
+                    alertify.success('Filters reset');
+                }
+            });
+        }
+        
+        // Toggle collapse for filter sections
+        document.querySelectorAll('.shop-w__toggle').forEach(function(toggle) {
+            toggle.addEventListener('click', function() {
+                const target = document.querySelector(this.dataset.target);
+                if (target.classList.contains('show')) {
+                    target.classList.remove('show');
+                    this.classList.remove('fa-minus');
+                    this.classList.add('fa-plus');
+                } else {
+                    target.classList.add('show');
+                    this.classList.remove('fa-plus');
+                    this.classList.add('fa-minus');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

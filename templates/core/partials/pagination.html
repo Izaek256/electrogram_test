@@ -1,0 +1,36 @@
+<div class="pagination-container">
+    <ul class="pagination">
+    {% if products.has_previous %}
+        <li class="page-item">
+            <a class="page-link" 
+               hx-get="{% if section == 'categories' %}{% url 'base:api_products' %}?section=categories{% elif category and category.cid %}{% url 'base:product_category_list' category.cid %}{% else %}{% url 'base:api_products' %}?section={{ section|default:'recent-products' }}{% endif %}&page={{ products.previous_page_number }}"
+               hx-target="[data-section-container='{{ section|default:'recent-products' }}']"
+               hx-indicator="#{{ section|default:'recent-products' }}-loader"
+               hx-swap="innerHTML"
+               href="#">&laquo;</a>
+        </li>
+    {% endif %}
+    
+    {% for num in products.paginator.page_range %}
+        <li class="page-item {% if products.number == num %}active{% endif %}">
+            <a class="page-link" 
+               hx-get="{% if section == 'categories' %}{% url 'base:api_products' %}?section=categories{% elif category and category.cid %}{% url 'base:product_category_list' category.cid %}{% else %}{% url 'base:api_products' %}?section={{ section|default:'recent-products' }}{% endif %}&page={{ num }}"
+               hx-target="[data-section-container='{{ section|default:'recent-products' }}']"
+               hx-indicator="#{{ section|default:'recent-products' }}-loader"
+               hx-swap="innerHTML"
+               href="#">{{ num }}</a>
+        </li>
+    {% endfor %}
+    
+    {% if products.has_next %}
+        <li class="page-item">
+            <a class="page-link" 
+               hx-get="{% if section == 'categories' %}{% url 'base:api_products' %}?section=categories{% elif category and category.cid %}{% url 'base:product_category_list' category.cid %}{% else %}{% url 'base:api_products' %}?section={{ section|default:'recent-products' }}{% endif %}&page={{ products.next_page_number }}"
+               hx-target="[data-section-container='{{ section|default:'recent-products' }}']"
+               hx-indicator="#{{ section|default:'recent-products' }}-loader"
+               hx-swap="innerHTML"
+               href="#">&raquo;</a>
+        </li>
+    {% endif %}
+    </ul>
+</div>

@@ -1,0 +1,56 @@
+{% load humanize %}
+<div data-section-container="{{ section }}">
+    <div class="row products-container">
+        {% for product in products_page %}
+        <div class="col-lg-3 col-md-4 col-sm-6 u-s-m-b-30">
+            <div class="product-r u-h-100">
+                <div class="product-r__container">
+                    <a class="aspect aspect--bg-grey aspect--square u-d-block"
+                       href="{% url 'base:product-detail' slug=product.slug %}">
+                        <img class="aspect__img" src="{{ product.get_image_url }}" alt="{{ product.title }}">
+                    </a>
+                </div>
+                <div class="product-r__info-wrap">
+                    <span class="product-r__category">
+                        <a href="{% url 'base:product_category_list' product.category.cid %}">{{ product.category.title }}</a>
+                    </span>
+                    <div class="product-r__n-p-wrap">
+                        <span class="product-r__name">
+                            <a href="{% url 'base:product-detail' slug=product.slug %}">{{ product.title }}</a>
+                        </span>
+                    </div>
+                    <div class="product-r__price-container" style="display: flex; align-items: center;">
+                        <span class="product-r__price"> Ugshs. </span>
+                        <span class="product-r__price" id="current_price{{ product.id }}">{{ product.price|intcomma }} </span>
+                        <span class="product-r__price"> /= </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <!-- Pagination Controls -->
+        <div class="col-12">
+            <nav aria-label="Page navigation" class="d-flex justify-content-center mt-4" data-section="{{ section }}">
+                <ul class="pagination">
+                    {% if products_page.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="#" data-page="{{ products_page.previous_page_number }}">&laquo;</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in products_page.paginator.page_range %}
+                        <li class="page-item {% if products_page.number == num %}active{% endif %}">
+                            <a class="page-link" href="#" data-page="{{ num }}">{{ num }}</a>
+                        </li>
+                    {% endfor %}
+                    
+                    {% if products_page.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="#" data-page="{{ products_page.next_page_number }}">&raquo;</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>

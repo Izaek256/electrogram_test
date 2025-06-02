@@ -1,0 +1,77 @@
+{% load humanize %}
+<div class="row is-grid-active">
+    {% for category in categories %}
+    <div class="col-lg-3 col-md-4 col-sm-6">
+        <div class="product-m" style="position: relative;">
+            <!-- Minimal Tag -->
+            <div style="position: absolute; top: 10px; right: 10px; width: 12px; height: 12px; background-color: red; border-radius: 50%; z-index: 10;"></div>
+
+            <div class="product-m__thumb">
+                <a class="aspect aspect--square u-d-block" href="{% url 'base:product_category_list' category.cid %}">
+                    <img class="aspect__img" src="{{ category.get_image_url }}" alt="{{ category.title }}" style="max-height: 200px; object-fit: contain;">
+                </a>
+            </div>
+            <div class="product-m__content" style="padding-top: 10px; text-align: center;">
+                <div class="product-m__category" style="margin-bottom: 5px;">
+                    <a href="{% url 'base:product_category_list' category.cid %}" style="font-size: 1.1em; font-weight: bold; color: #333;">{{ category.title }}</a>
+                </div>
+                <div class="product-m__name" style="display: flex; justify-content: center; align-items: center;">
+                    <span style="display: inline-block; width: 8px; height: 8px; background-color: green; border-radius: 50%; margin-right: 5px;"></span>
+                    <span class="product-m__count" style="font-size: 0.9em; color: #777;">{{ category.category.count }} Products</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+<div class="u-s-p-y-60">
+    {% if categories.has_other_pages %}
+    <ul class="shop-p__pagination">
+        {% if categories.has_previous %}
+        <li>
+            <a href="?page={{ categories.previous_page_number }}" 
+               hx-get="{% url 'base:category_list' %}?page={{ categories.previous_page_number }}"
+               hx-target="#categories-container"
+               hx-swap="innerHTML">
+                <i class="fas fa-angle-left"></i>
+            </a>
+        </li>
+        {% endif %}
+
+        {% for i in categories.paginator.page_range %}
+            {% if categories.number == i %}
+            <li class="is-active">
+                <a href="?page={{ i }}"
+                   hx-get="{% url 'base:category_list' %}?page={{ i }}"
+                   hx-target="#categories-container"
+                   hx-swap="innerHTML">
+                    {{ i }}
+                </a>
+            </li>
+            {% elif i > categories.number|add:'-3' and i < categories.number|add:'3' %}
+            <li>
+                <a href="?page={{ i }}"
+                   hx-get="{% url 'base:category_list' %}?page={{ i }}"
+                   hx-target="#categories-container"
+                   hx-swap="innerHTML">
+                    {{ i }}
+                </a>
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if categories.has_next %}
+        <li>
+            <a href="?page={{ categories.next_page_number }}"
+               hx-get="{% url 'base:category_list' %}?page={{ categories.next_page_number }}"
+               hx-target="#categories-container"
+               hx-swap="innerHTML">
+                <i class="fas fa-angle-right"></i>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+    {% endif %}
+</div>

@@ -1,0 +1,152 @@
+{% load humanize %}
+
+<div class="row is-grid-active">
+{% for product in products %}
+<div class="col-lg-3 col-md-4 col-sm-6">
+    <div class="product-m">
+        <div class="product-m__thumb">
+            <a class="aspect aspect--bg-grey aspect--square u-d-block" href="{% url 'base:product-detail' product.slug %}">
+                <img class="aspect__img" src="{{ product.get_image_url }}" alt="{{ product.title }}">
+            </a>
+            <div class="product-m__quick-look">
+                <a class="fas fa-search" data-modal="modal" data-modal-id="#quick-look" data-tooltip="tooltip" data-placement="top" title="Quick Look"></a>
+            </div>
+            <div class="product-m__add-cart">
+                <button class="btn btn--e-brand-b-2 add-to-cart-btn" id="addCart" type="button" value="{{ product.id }}" data-product-id="{{ product.id }}">Add to Cart</button>
+            </div>
+        </div>
+        <div class="product-m__content">
+            <div class="product-m__category">
+                <a href="{% url 'base:product_category_list' product.category.cid %}">{{ product.category.title }}</a>
+            </div>
+            <div class="product-m__name">
+                <a href="{% url 'base:product-detail' product.slug %}">{{ product.title }}</a>
+            </div>
+            <div class="product-m__rating gl-rating-style">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+                <i class="far fa-star"></i>
+                <i class="far fa-star"></i>
+                <span class="product-m__review">(23)</span>
+            </div>
+            <div class="product-m__price">
+                Ugx. {{ product.price|intcomma }}/=
+            </div>
+            <div class="pd-detail__inline">
+                <span class="pd-detail__stock">{{ product.stock }} in stock</span>
+                {% if product.stock <= 5 %}
+                <span class="pd-detail__left">Only {{ product.stock }} left</span>
+                {% endif %}
+                {% if product.tags.all %}
+                {% for tag in product.tags.all %}
+                <span class="pd-detail__tag" data-tag="{{ tag.name }}">{{ tag.name }}</span>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <div class="product-m__hover">
+                <div class="product-m__preview-description">
+                    <span>{{ product.description|truncatechars:150 }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+</div>
+
+<!-- Pagination Loader - Using the same loader style as other pages -->
+<div id="pagination-loader" class="htmx-indicator" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.8); z-index: 1000; min-height: 300px; pointer-events: none;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <div style="background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.1); text-align: center;">
+            <i class="fas fa-spinner fa-spin fa-3x" style="color: #ff4500; margin-bottom: 10px;"></i>
+            <div style="font-weight: bold; color: #333;">Loading products...</div>
+        </div>
+    </div>
+</div>
+
+{% if products.has_other_pages %}
+<div class="u-s-p-y-60">
+    <div class="pagination-container">
+        <ul class="pagination">
+        <!-- First page button -->
+        <li class="page-item">
+            <a class="page-link" 
+               hx-get="{% url 'base:product_category_list' category.cid %}?page=1"
+               hx-target="#products-container"
+               hx-indicator="#pagination-loader"
+               hx-swap="innerHTML"
+               hx-push-url="true"
+               href="?page=1">&laquo;</a>
+        </li>
+        
+        <!-- Previous page button -->
+        <li class="page-item {% if not products.has_previous %}disabled{% endif %}">
+            <a class="page-link" 
+               {% if products.has_previous %}
+               hx-get="{% url 'base:product_category_list' category.cid %}?page={{ products.previous_page_number }}"
+               hx-target="#products-container"
+               hx-indicator="#pagination-loader"
+               hx-swap="innerHTML"
+               hx-push-url="true"
+               href="?page={{ products.previous_page_number }}"
+               {% else %}
+               href="javascript:void(0);"
+               {% endif %}
+               >&lt;</a>
+        </li>
+        
+        <!-- Show limited page numbers -->
+        {% with products.number|add:"-2" as start %}
+        {% with products.number|add:"2" as end %}
+        {% for i in products.paginator.page_range %}
+            {% if i >= start and i <= end and i > 0 and i <= products.paginator.num_pages %}
+                <li class="page-item {% if products.number == i %}active{% endif %}" {% if products.number == i %}style="pointer-events: none;"{% endif %}>
+                    <a class="page-link" 
+                       {% if products.number != i %}
+                       hx-get="{% url 'base:product_category_list' category.cid %}?page={{ i }}"
+                       hx-target="#products-container"
+                       hx-indicator="#pagination-loader"
+                       hx-swap="innerHTML"
+                       hx-push-url="true"
+                       href="?page={{ i }}"
+                       {% else %}
+                       href="javascript:void(0);"
+                       {% endif %}
+                       >{{ i }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+        {% endwith %}
+        {% endwith %}
+        
+        <!-- Next page button -->
+        <li class="page-item {% if not products.has_next %}disabled{% endif %}">
+            <a class="page-link" 
+               {% if products.has_next %}
+               hx-get="{% url 'base:product_category_list' category.cid %}?page={{ products.next_page_number }}"
+               hx-target="#products-container"
+               hx-indicator="#pagination-loader"
+               hx-swap="innerHTML"
+               hx-push-url="true"
+               href="?page={{ products.next_page_number }}"
+               {% else %}
+               href="javascript:void(0);"
+               {% endif %}
+               >&gt;</a>
+        </li>
+        
+        <!-- Last page button -->
+        <li class="page-item">
+            <a class="page-link" 
+               hx-get="{% url 'base:product_category_list' category.cid %}?page={{ products.paginator.num_pages }}"
+               hx-target="#products-container"
+               hx-indicator="#pagination-loader"
+               hx-swap="innerHTML"
+               hx-push-url="true"
+               href="?page={{ products.paginator.num_pages }}">&raquo;</a>
+        </li>
+        </ul>
+    </div>
+</div>
+{% endif %}

@@ -1,0 +1,255 @@
+{% extends 'partials/basenext.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+<!--====== App Content ======-->
+<div class="app-content">
+<div class="u-s-p-y-60">
+    <!--====== Section Content ======-->
+    <div class="section__content">
+        <div class="container">
+            <div class="breadcrumb">
+                <div class="breadcrumb__wrap">
+                    <ul class="breadcrumb__list">
+                        <li class="has-separator">
+                            <a href="{% url 'base:index' %}">Home</a>
+                        </li>
+                        <li class="is-marked">
+                            <a href="{% url 'base:product_list'  %}">Shop</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <!--====== Section 1 ======-->
+    <div class="u-s-p-y-90">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-12">
+                    <div class="shop-w-master">
+                        <h1 class="shop-w-master__heading u-s-m-b-30"><i class="fas fa-filter u-s-m-r-8"></i>
+                            <span>FILTERS</span>
+                        </h1>
+                        <div class="shop-w-master__sidebar">
+                            <form id="filters-form" hx-get="{% url 'base:filter_products' %}" hx-target="#product-grid" hx-push-url="true" hx-trigger="change from:input, select, form" hx-indicator="#product-grid-loader" class="u-s-m-b-30">
+                                <style>
+                                    details.shop-w {
+                                        border-radius: 6px;
+                                        background: #fff;
+                                        margin-bottom: 20px;
+                                        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+                                        padding: 0;
+                                    }
+                                    details.shop-w[open] summary .dropdown-icon {
+                                        transform: rotate(90deg);
+                                    }
+                                    summary.shop-w__intro-wrap {
+                                        display: flex;
+                                        align-items: center;
+                                        padding: 16px 18px 16px 18px;
+                                        font-weight: 600;
+                                        font-size: 16px;
+                                        border-bottom: 1px solid #f0f0f0;
+                                        background: #fafbfc;
+                                        cursor: pointer;
+                                        user-select: none;
+                                    }
+                                    .dropdown-icon {
+                                        font-family: 'FontAwesome';
+                                        font-size: 18px;
+                                        margin-right: 12px;
+                                        transition: transform 0.2s;
+                                        color: #222;
+                                        width: 18px;
+                                        display: inline-block;
+                                        text-align: center;
+                                    }
+                                    .shop-w__wrap {
+                                        padding: 18px 22px 18px 22px;
+                                        background: #fff;
+                                    }
+                                </style>
+                                <details class="shop-w shop-w--style">
+                                    <summary class="shop-w__intro-wrap">
+                                        <span class="dropdown-icon">-</span>
+                                        <h1 class="shop-w__h" style="display:inline;">CATEGORY</h1>
+                                    </summary>
+                                    <div class="shop-w__wrap" id="s-category">
+                                        <ul class="shop-w__category-list gl-scroll">
+                                            {% for c in categories %}
+                                            <li>
+                                                <label style="display:flex;align-items:center;gap:6px;">
+                                                    <input type="checkbox" name="category" value="{{ c.id }}"
+                                                        class="input-text input-text--primary-style"
+                                                        {% if c.id in selected_categories %}checked{% endif %}>
+                                                    {{ c.title }}
+                                                </label>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </details>
+                                <details class="shop-w shop-w--style">
+                                    <summary class="shop-w__intro-wrap">
+                                        <span class="dropdown-icon">-</span>
+                                        <h1 class="shop-w__h" style="display:inline;">BRAND</h1>
+                                    </summary>
+                                    <div class="shop-w__wrap" id="s-manufacturer">
+                                        <ul class="shop-w__list-2">
+                                            {% for b in brands %}
+                                            <li>
+                                                <label style="display:flex;align-items:center;gap:3px;">
+                                                    <input type="checkbox" name="brand" value="{{ b.id }}"
+                                                        class="input-text input-text--primary-style"
+                                                        {% if b.id in selected_brands %}checked{% endif %}>
+                                                    {{ b.title }}
+                                                </label>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </details>
+                                <details class="shop-w shop-w--style">
+                                    <summary class="shop-w__intro-wrap">
+                                        <span class="dropdown-icon">-</span>
+                                        <h1 class="shop-w__h" style="display:inline;">PRICE</h1>
+                                    </summary>
+                                    <div class="shop-w__wrap" id="s-price">
+                                        <div>
+                                            <label class="shop-w__h">Min:</label>
+                                            <input type="number" name="price_min" min="0"
+                                                class="input-text input-text--primary-style"
+                                                id="price-min"
+                                                value="{{ price_min|default_if_none:'' }}">
+                                        </div>
+                                        <div>
+                                            <label class="shop-w__h">Max:</label>
+                                            <input type="number" name="price_max" min="0"
+                                                class="input-text input-text--primary-style"
+                                                id="price-max"
+                                                value="{{ price_max|default_if_none:'' }}">
+                                        </div>
+                                    </div>
+                                </details>
+                                <!-- Optionally add a reset button -->
+                                <button
+                                    type="reset"
+                                    class="shop-now-link btn--e-brand"
+                                    style="margin-left:8px;margin-top:8px;"
+                                    onclick="
+                                        // Show the loader immediately
+                                        var loader = document.getElementById('product-grid-loader');
+                                        if (loader) {
+                                            loader.style.display = 'block';
+                                            console.log('Showing loader for reset button');
+                                        }
+                                        
+                                        setTimeout(function() {
+                                            // Remove all query params and reload the product grid via HTMX
+                                            history.replaceState(null, '', window.location.pathname);
+                                            htmx.ajax('GET', window.location.pathname, {target: '#product-grid', pushURL: true});
+                                            // Show alertify notification
+                                            if (typeof alertify !== 'undefined') {
+                                                alertify.success('Filters reset');
+                                            }
+                                            
+                                            // Set a fallback to hide the loader after 3 seconds
+                                            setTimeout(function() {
+                                                if (loader) {
+                                                    loader.style.display = 'none';
+                                                }
+                                            }, 3000);
+                                        }, 10);
+                                    "
+                                    id="reset-filters"
+                                >Reset</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9 col-md-12">
+                    <div class="shop-p">
+                        <div class="shop-p__toolbar u-s-m-b-30">
+                            <div class="shop-p__meta-wrap u-s-m-b-60">
+                                <span class="shop-p__meta-text-1">Showing {{ products.paginator.count }} results</span>
+                            </div>
+                            <div class="shop-p__tool-style">
+                                <div class="tool-style__group u-s-m-b-8">
+                                    <span class="js-shop-grid-target is-active">Grid</span>
+                                    <span class="js-shop-list-target">List</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% csrf_token %}
+                        <div id="product-grid">
+                            {% include 'core/partials/product_grid.html' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--====== End - Section 1 ======-->
+</div>
+<!--====== End - App Content ======-->
+
+<script>
+    function toggleCollapse(id, header) {
+        var section = document.getElementById(id);
+        var icon = header.querySelector('.shop-w__toggle');
+        if (section.classList.contains('show')) {
+            section.classList.remove('show');
+            icon.classList.remove('fa-minus');
+            icon.classList.add('fa-plus');
+        } else {
+            section.classList.add('show');
+            icon.classList.remove('fa-plus');
+            icon.classList.add('fa-minus');
+        }
+    }
+    // On page load, keep all filters compacted (not expanded)
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize collapsed filters
+        document.querySelectorAll('.shop-w__wrap').forEach(function(el) {
+            el.classList.remove('show');
+        });
+        document.querySelectorAll('.shop-w__toggle').forEach(function(icon) {
+            icon.classList.remove('fa-minus');
+            icon.classList.add('fa-plus');
+        });
+        
+        // Add event listeners to show alertify notifications when filters change
+        document.querySelectorAll('input[type="checkbox"], input[type="number"], select').forEach(function(input) {
+            input.addEventListener('change', function() {
+                if (typeof alertify !== 'undefined') {
+                    alertify.success('Filters updated');
+                }
+            });
+        });
+        
+        // Add event listener to reset button if it exists
+        const resetButton = document.getElementById('reset-filters');
+        if (resetButton) {
+            resetButton.addEventListener('click', function() {
+                if (typeof alertify !== 'undefined') {
+                    alertify.success('Filters reset');
+                }
+            });
+        }
+    });
+</script>
+{% if messages %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% for message in messages %}
+        alertify.{{ message.tags|lower }}('{{ message|escapejs }}');
+        {% endfor %}
+    });
+</script>
+{% endif %}
+<!-- Loader functionality is handled by pagination-loader.js in base template -->
+{% endblock content %}

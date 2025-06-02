@@ -1,0 +1,504 @@
+{% extends 'partials/basenext.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+<!--====== App Content ======-->
+<div class="app-content">
+
+    <!--====== Section 1 ======-->
+    <div class="u-s-p-y-60">
+
+        <!--====== Section Content ======-->
+        <div class="section__content">
+            <div class="container">
+                <div class="breadcrumb">
+                    <div class="breadcrumb__wrap">
+                        <ul class="breadcrumb__list">
+                            <li class="has-separator">
+                                <a href="{% url 'base:index' %}">Home</a>
+                            </li>
+                            <li class="has-separator">
+                                <a href="{% url 'base:product_list' %}">Shop</a>
+                            </li>
+                            <li class="is-marked">
+                                <a href="{% url 'base:dashboard' %}">My Account</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--====== End - Section 1 ======-->
+
+    <!--====== Section 2 ======-->
+    <div class="u-s-p-b-60">
+
+        <!--====== Section Content ======-->
+        <div class="section__content">
+            <div class="dash">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-12">
+                            <!--====== Dashboard Features ======-->
+                            <div class="dash__box dash__box--bg-white dash__box--shadow u-s-m-b-30">
+                                <div class="dash__pad-1">
+                                    <span class="dash__text u-s-m-b-16">Hello, <span class="dash__text-2">{{ request.user.username }}</span></span>
+                                    <ul class="dash__f-list">
+                                        <li>
+                                            <a class="dash-active" href="{% url 'base:dashboard' %}">My Account Dashboard</a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url 'userauths:user_profile_update' %}">My Profile</a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url 'base:delivery_update_info' %}">Address Book & Delivery Info.</a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url 'userauths:password_update' %}">Update Password</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!--====== End - Dashboard Features ======-->
+                            
+                            <!--====== Dashboard Stats ======-->
+                            <div class="dash__box dash__box--bg-white dash__box--shadow dash__box--w">
+                                <div class="dash__pad-1">
+                                    <ul class="dash__w-list">
+                                        <li>
+                                            <div class="dash__w-wrap">
+                                                <span class="dash__w-icon dash__w-icon-style-1"><i class="fas fa-cart-arrow-down"></i></span>
+                                                <span class="dash__w-text">{{ total_orders_count }}</span>
+                                                <span class="dash__w-name">Orders Placed</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="dash__w-wrap">
+                                                <span class="dash__w-icon dash__w-icon-style-2"><i class="fas fa-times"></i></span>
+                                                <span class="dash__w-text">{{ recent_orders|dictsortreversed:"status"|first }}</span>
+                                                <span class="dash__w-name">Recently Placed</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="dash__w-wrap">
+                                                <span class="dash__w-icon dash__w-icon-style-3"><i class="fas fa-user"></i></span>
+                                                <span class="dash__w-text">{{ request.user.date_joined|date:"d/m/Y" }}</span>
+                                                <span class="dash__w-name">Member Since</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!--====== End - Dashboard Stats ======-->
+                        </div>
+                        <div class="col-lg-9 col-md-12">
+                            <div id="messageContainer" class="u-s-m-b-30"></div> <!-- Message container -->
+                            
+                            <div class="dash__box dash__box--shadow dash__box--radius dash__box--bg-white u-s-m-b-30">
+                                <div class="dash__pad-2">
+                                    <h1 class="dash__h1 u-s-m-b-14">Manage My Account</h1>
+                                    <span class="dash__text u-s-m-b-30">From your My Account Dashboard you have the ability to view your recent account activity and update your account information.</span>
+                                    
+                                    <div class="row">
+                                        <div class="col-lg-4 u-s-m-b-30">
+                                            <div class="dash__box dash__box--bg-grey dash__box--shadow-2 u-h-100">
+                                                <div class="dash__pad-3">
+                                                    <h2 class="dash__h2 u-s-m-b-8">PERSONAL PROFILE</h2>
+                                                    <div class="dash__link dash__link--secondary u-s-m-b-8">
+                                                        <a href="{% url 'userauths:user_profile_update' %}">Edit</a>
+                                                    </div>
+                                                    <span class="dash__text">{{ request.user.username }}</span>
+                                                    <span class="dash__text">{{ request.user.email }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-8 u-s-m-b-30">
+                                            <div class="dash__box dash__box--bg-grey dash__box--shadow-2 u-h-100">
+                                                <div class="dash__pad-3">
+                                                    <h2 class="dash__h2 u-s-m-b-8">DELIVERY AND ORDER INFORMATION</h2>
+                                                    <div class="dash__link dash__link--secondary u-s-m-b-8">
+                                                        <a href="{% url 'base:delivery_update_info' %}">Edit</a>
+                                                    </div>
+                                                    
+                                                    <div class="dash__form">
+                                                        <div class="gl-inline">
+                                                            <div class="u-s-m-b-15">
+                                                                <label class="gl-label">FULL NAME:</label>
+                                                                <span class="dash__text-2">{{ delivery_address.delivery_full_name }}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="gl-inline">
+                                                            <div class="u-s-m-b-15">
+                                                                <label class="gl-label">ADDRESS:</label>
+                                                                <span class="dash__text-2">{{ delivery_address.delivery_address }}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="gl-inline">
+                                                            <div class="u-s-m-b-15">
+                                                                <label class="gl-label">CITY:</label>
+                                                                <span class="dash__text-2">{{ delivery_address.delivery_city }}</span>
+                                                            </div>
+                                                            <div class="u-s-m-b-15">
+                                                                <label class="gl-label">DISTRICT:</label>
+                                                                <span class="dash__text-2">{{ delivery_address.delivery_district }}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="gl-inline">
+                                                            <div class="u-s-m-b-15">
+                                                                <label class="gl-label">PHONE:</label>
+                                                                <span class="dash__text-2">{{ delivery_address.delivery_phone_number }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="dash__box dash__box--shadow dash__box--bg-white dash__box--radius">
+                                <h2 class="dash__h2 u-s-p-xy-20">RECENT ORDERS</h2>
+                                <div class="dash__table-wrap gl-scroll">
+                                    <table class="dash__table">
+                                        <thead>
+                                            <tr>
+                                                <th>Order #</th>
+                                                <th>Placed On</th>
+                                                <th>Status</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for order in recent_orders %}
+                                            <tr data-order-id="{{ order.id }}">
+                                                <td data-label="Order #" onclick="showOrderDetails('{{ order.id }}')" style="cursor:pointer;">
+                                                    {{ order.invoice_number }}
+                                                </td>
+                                                <td data-label="Placed On">{{ order.invoice_date }}</td>
+                                                <td data-label="Status" id="orderStatus">
+                                                    <span class="pd-detail__stock {% if order.status == 'Cancelled' %}dash__text--danger{% elif order.status == 'Completed' %}dash__text--success{% else %}dash__text--brand{% endif %}">{{ order.status }}</span>
+                                                </td>
+                                                <td data-label="Total">
+                                                    <div class="dash__table-total">
+                                                        <span>UGX {{ order.amount_paid|intcomma }}</span>
+                                                        <div class="dash__link dash__link--brand">
+                                                            <a href="javascript:void(0)" class="btn btn--e-brand-b-2" onclick="event.preventDefault(); showOrderDetails('{{ order.id }}');">VIEW</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--====== End - Section Content ======-->
+    </div>
+    <!--====== End - Section 2 ======-->
+
+    <!-- Modal Structure - Order Details Modal -->
+    <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content dash__box--shadow">
+                <div class="modal-header dash__pad-2">
+                    <h2 class="modal-title dash__h2" id="staticBackdropLabel">Order Details</h2>
+                    <button type="button" class="custom-close" data-bs-dismiss="modal" aria-label="Close">×</button>
+                </div>
+                <div class="modal-body dash__pad-2">
+                    <div id="orderDetails" class="dash__box dash__box--bg-grey dash__box--shadow-2 u-s-m-b-20 dash__pad-2">
+                        <div class="dash__form">
+                            <div class="gl-inline">
+                                <div class="u-s-m-b-10">
+                                    <label class="gl-label">ORDER ID:</label>
+                                    <span class="dash__text-2" id="orderId"></span>
+                                </div>
+                                <div class="u-s-m-b-10">
+                                    <label class="gl-label">PLACED ON:</label>
+                                    <span class="dash__text-2" id="orderPlacedOn"></span>
+                                </div>
+                            </div>
+                            <div class="gl-inline">
+                                <div class="u-s-m-b-10">
+                                    <label class="gl-label">ORDER AMOUNT:</label>
+                                    <span class="dash__text-2">UGX <span id="orderAmount"></span></span>
+                                </div>
+                                <div class="u-s-m-b-10">
+                                    <label class="gl-label">STATUS:</label>
+                                    <span class="dash__text-2" id="orderStatusDetail"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 class="dash__h3 u-s-m-b-10">Order Items</h3>
+                    <div class="dash__table-wrap gl-scroll">
+                        <table class="dash__table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orderItems">
+                                <!-- Order items will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer dash__pad-2">
+                    <button type="button" class="btn btn--e-transparent-secondary-b-2" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn--e-brand-b-2" id="cancelOrderButton"
+                        onclick="cancelOrder(currentOrderId)">Cancel Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!--====== End - App Content ======-->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let currentOrderId; // Declare a variable to hold the current order ID
+    
+    // Initialize all modals when the document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        // Make sure Bootstrap is loaded
+        if (typeof bootstrap !== 'undefined') {
+            console.log('Bootstrap loaded successfully');
+        } else {
+            console.error('Bootstrap not loaded');
+        }
+    });
+
+    function showOrderDetails(orderId) {
+        currentOrderId = orderId; // Set the current order ID when showing details
+
+        fetch(`/api/orders/${orderId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('orderId').innerText = data.id;
+                document.getElementById('orderAmount').innerText = data.amount;
+                
+                // Set status with appropriate styling
+                const statusElement = document.getElementById('orderStatusDetail');
+                statusElement.innerText = data.status;
+                statusElement.className = 'dash__text-2';
+                
+                if (data.status === 'Cancelled') {
+                    statusElement.classList.add('dash__text--danger');
+                } else if (data.status === 'Completed') {
+                    statusElement.classList.add('dash__text--success');
+                } else {
+                    statusElement.classList.add('dash__text--brand');
+                }
+                
+                document.getElementById('orderPlacedOn').innerText = data.placed_on;
+                
+                // Create order items table rows with Ludus styling
+                const orderItems = data.items.map(item => {
+                    return `
+                    <tr>
+                        <td data-label="Item">${item.product_name}</td>
+                        <td data-label="Quantity">${item.quantity}</td>
+                        <td data-label="Price">
+                            <div class="dash__table-total">
+                                <span>UGX ${item.price}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    `;
+                }).join('');
+                
+                document.getElementById('orderItems').innerHTML = orderItems;
+                
+                // Handle the cancel button based on order status
+                const cancelButton = document.getElementById('cancelOrderButton');
+                if (data.status === 'Cancelled') {
+                    cancelButton.innerText = 'Cancelled';
+                    cancelButton.classList.remove('btn--e-brand-b-2');
+                    cancelButton.classList.add('btn--e-transparent-secondary-b-2');
+                    cancelButton.disabled = true;
+                } else if (data.status === 'Completed') {
+                    cancelButton.innerText = 'Completed';
+                    cancelButton.classList.remove('btn--e-brand-b-2');
+                    cancelButton.classList.add('btn--e-transparent-brand-b-2');
+                    cancelButton.disabled = true;
+                } else {
+                    cancelButton.innerText = 'Cancel Order';
+                    cancelButton.classList.remove('btn--e-transparent-secondary-b-2', 'btn--e-transparent-brand-b-2');
+                    cancelButton.classList.add('btn--e-brand-b-2');
+                    cancelButton.disabled = false;
+                }
+                
+                // Get the modal element
+                const modalElement = document.getElementById('orderModal');
+                if (!modalElement) {
+                    console.error('Modal element not found');
+                    return;
+                }
+
+                // Create a new modal instance (Bootstrap 5)
+                const orderModal = new bootstrap.Modal(modalElement, {
+                    backdrop: true,
+                    keyboard: true,
+                    focus: true
+                });
+                
+                // Store the modal instance for later use
+                modalElement._orderModal = orderModal;
+                
+                // Show the modal
+                try {
+                    orderModal.show();
+                    console.log('Modal shown');
+                    
+                    // Add event listeners for close buttons
+                    const closeButtons = modalElement.querySelectorAll('[data-bs-dismiss="modal"]');
+                    closeButtons.forEach(button => {
+                        button.addEventListener('click', () => {
+                            orderModal.hide();
+                        });
+                    });
+                    
+                    // Handle backdrop click
+                    modalElement.addEventListener('click', function(event) {
+                        if (event.target === modalElement) {
+                            orderModal.hide();
+                        }
+                    });
+                    
+                } catch (error) {
+                    console.error('Error showing modal:', error);
+                    // Fallback to jQuery if available
+                    if (typeof $ !== 'undefined') {
+                        $('#orderModal').modal('show');
+                    } else {
+                        // Last resort: show the modal by manipulating styles
+                        modalElement.style.display = 'block';
+                        modalElement.classList.add('show');
+                        document.body.classList.add('modal-open');
+                        const backdrop = document.createElement('div');
+                        backdrop.className = 'modal-backdrop fade show';
+                        backdrop.id = 'modalBackdrop';
+                        document.body.appendChild(backdrop);
+                        
+                        // Add click handler for backdrop
+                        backdrop.addEventListener('click', () => {
+                            modalElement.style.display = 'none';
+                            modalElement.classList.remove('show');
+                            document.body.classList.remove('modal-open');
+                            backdrop.remove();
+                        });
+                        
+                        // Add click handlers for close buttons
+                        const closeButtons = modalElement.querySelectorAll('[data-bs-dismiss="modal"]');
+                        closeButtons.forEach(button => {
+                            button.addEventListener('click', () => {
+                                modalElement.style.display = 'none';
+                                modalElement.classList.remove('show');
+                                document.body.classList.remove('modal-open');
+                                if (backdrop && backdrop.parentNode) {
+                                    backdrop.remove();
+                                }
+                            });
+                        });
+                    }
+                }
+            })
+            .catch(error => console.error('Error fetching order details:', error));
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Check if this cookie string begins with the name we want
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function cancelOrder(currentOrderId) {
+        const orderStatusElement = document.querySelector(`tr[data-order-id="${currentOrderId}"] td[data-label="Status"]`);
+        let orderStatus = '';
+        
+        // Extract the text content from the span element inside the td
+        const statusSpan = orderStatusElement.querySelector('span');
+        if (statusSpan) {
+            orderStatus = statusSpan.innerText;
+        } else {
+            orderStatus = orderStatusElement.innerText;
+        }
+        
+        if (orderStatus === 'Completed') {
+            displayMessage('This order cannot be canceled as it is already completed.', 'dash__alert--error');
+        } else if (orderStatus === 'Cancelled') {
+            displayMessage('This order is already canceled.', 'dash__alert--info');
+        } else {
+            fetch(`/cancel_order/${currentOrderId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Network response was not ok.');
+                })
+                .then(data => {
+                    displayMessage(data.message, 'dash__alert--success');
+                    
+                    // Update the status in the table with proper styling
+                    if (statusSpan) {
+                        statusSpan.innerText = 'Cancelled';
+                        statusSpan.className = 'pd-detail__stock dash__text--danger';
+                    } else {
+                        orderStatusElement.innerHTML = '<span class="pd-detail__stock dash__text--danger">Cancelled</span>';
+                    }
+                    
+                    $('#orderModal').modal('hide');
+                })
+                .catch(error => {
+                    console.error('Error canceling order:', error);
+                    displayMessage('Error canceling order. Please try again.', 'dash__alert--error');
+                });
+        }
+    }
+
+    function displayMessage(message, type) {
+        const messageContainer = document.getElementById('messageContainer');
+        messageContainer.innerHTML = `
+            <div class="dash__box dash__box--shadow dash__box--radius dash__box--bg-white u-s-m-b-30">
+                <div class="dash__pad-2">
+                    <div class="${type}">${message}</div>
+                </div>
+            </div>
+        `;
+        setTimeout(() => {
+            messageContainer.innerHTML = '';
+        }, 3000);
+    }
+</script>
+{% endblock content %}

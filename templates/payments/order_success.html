@@ -1,0 +1,291 @@
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<!-- Include Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- Include Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+<!-- Include jsPDF for PDF generation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+    /* A4 page size styling */
+    @page {
+        size: A4;
+        margin: 0;
+    }
+    
+    body {
+        background-color: #f8f9fa;
+    }
+    
+    .invoice-container {
+        max-width: 210mm; /* A4 width */
+        min-height: 297mm; /* A4 height */
+        margin: 0 auto;
+        background: white;
+        position: relative;
+        padding: 0;
+    }
+    
+    .invoice-content {
+        padding: 20mm 15mm; /* Margins inside the A4 page */
+    }
+    
+    .invoice-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .company-details {
+        text-align: right;
+    }
+    
+    .invoice-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .logo {
+        width: 80px;
+        height: auto;
+    }
+    
+    .qr-code {
+        width: 80px;
+        height: auto;
+    }
+    
+    .invoice-details {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+    
+    .bill-to {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    
+    .bill-to h5 {
+        color: #ff4500;
+        margin-bottom: 10px;
+    }
+    
+    .bill-to p {
+        margin-bottom: 5px;
+    }
+    
+    .table-items {
+        margin-bottom: 20px;
+    }
+    
+    .table-items th {
+        background-color: #f8f9fa;
+        color: #333;
+    }
+    
+    .table-items td, .table-items th {
+        padding: 8px 12px;
+    }
+    
+    .totals {
+        text-align: right;
+        margin-top: 20px;
+    }
+    
+    .amount-due {
+        font-size: 18px;
+        color: #ff4500;
+        font-weight: bold;
+    }
+    
+    .thank-you {
+        text-align: center;
+        margin-top: 30px;
+        font-weight: bold;
+    }
+    
+    .action-buttons {
+        text-align: center;
+        margin-top: 30px;
+    }
+    
+    /* Hide elements when printing */
+    @media print {
+        body {
+            background-color: white;
+        }
+        
+        .invoice-container {
+            box-shadow: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .no-print {
+            display: none !important;
+        }
+        
+        .success-alert {
+            display: none;
+        }
+    }
+</style>
+
+<div class="container my-4">
+    <!-- Success Alert (only visible on screen) -->
+    <div class="alert alert-success text-center success-alert no-print" role="alert">
+        Your order with invoice number #{{ order.invoice_number }} has been successfully placed! Thank you for shopping with us.
+    </div>
+    
+    <!-- Invoice Container (A4 size) -->
+    <div class="invoice-container shadow" id="invoice-container">
+        <div class="invoice-content">
+            <!-- Invoice Header -->
+            <div class="invoice-header">
+                <div>
+                    <h1 class="invoice-title">INVOICE</h1>
+                    <p class="text-muted">#{{ order.invoice_number }}</p>
+                </div>
+                <div class="company-details">
+                    <h3 class="text-primary">ELECTROGRAM LLC</h3>
+                    <div class="logo-container">
+                        <img src="https://res.cloudinary.com/dun3og1nu/image/upload/v1748456761/logo.png" alt="Logo" class="logo">
+                        <img src="{{ qr_code_url }}" alt="QR Code" class="qr-code">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Invoice Details -->
+            <div class="invoice-details">
+                <div>
+                    <p><strong>Invoice Date:</strong> {{ invoice_date }}</p>
+                    <p><strong>Due Date:</strong> {{ due_date }}</p>
+                </div>
+                <div>
+                    <p><strong>Total Amount:</strong></p>
+                    <p class="amount-due">UGX {{ order.amount_paid|intcomma }}</p>
+                </div>
+            </div>
+            
+            <!-- Bill To Section -->
+            <div class="bill-to">
+                <h5>Bill To</h5>
+                <p><strong>Name:</strong> {{ order.full_name }}</p>
+                <p><strong>Email:</strong> {{ order.email }}</p>
+                <p><strong>Phone Number:</strong> {{ phone_number }}</p>
+                <p><strong>Order Date:</strong> {{ order.created_at }}</p>
+            </div>
+            
+            <!-- Order Items Table -->
+            <h5 class="text-primary">Order Details</h5>
+            <div class="table-responsive table-items">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th class="text-center">Cost</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order_items %}
+                        <tr>
+                            <td>{{ item.product.title }}</td>
+                            <td class="text-center">{{ item.price|intcomma }}</td>
+                            <td class="text-center">{{ item.quantity }}</td>
+                            <td class="text-end">{{ item.total|intcomma }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Totals Section -->
+            <div class="totals">
+                <p><strong>Subtotal:</strong> UGX {{ order.amount_paid|intcomma }}</p>
+                <p><strong>Total:</strong> UGX {{ order.amount_paid|intcomma }}</p>
+                <p><strong>Amount Due:</strong> <span class="amount-due">UGX {{ order.amount_paid|intcomma }}</span></p>
+            </div>
+            
+            <hr>
+            
+            <!-- Thank You Message -->
+            <div class="thank-you">
+                <p>THANK YOU FOR SHOPPING WITH US!</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Action Buttons (not visible in print/PDF) -->
+    <div class="action-buttons no-print mt-4">
+        <button onclick="downloadPDF()" class="btn btn-primary me-2">
+            <i class="fas fa-download"></i> Download as PDF
+        </button>
+        <button onclick="window.print()" class="btn btn-secondary me-2">
+            <i class="fas fa-print"></i> Print Invoice
+        </button>
+        <a href="{% url 'base:product_list' %}" class="btn btn-outline-primary">
+            <i class="fas fa-home"></i> Return to Shop
+        </a>
+    </div>
+</div>
+
+<script>
+    // Function to download the invoice as PDF
+    function downloadPDF() {
+        // Show loading indicator
+        const loadingElement = document.createElement('div');
+        loadingElement.innerHTML = '<div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: center; z-index: 9999;"><div style="text-align: center;"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Generating PDF...</p></div></div>';
+        document.body.appendChild(loadingElement);
+        
+        // Get the invoice container element
+        const element = document.getElementById('invoice-container');
+        
+        // Use html2canvas to capture the element as an image
+        html2canvas(element, {
+            scale: 2, // Higher scale for better quality
+            useCORS: true, // Enable CORS for images
+            logging: false, // Disable logging
+            backgroundColor: '#ffffff' // White background
+        }).then(canvas => {
+            // Initialize jsPDF
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            
+            // Calculate dimensions to fit A4
+            const imgData = canvas.toDataURL('image/png');
+            const imgWidth = 210; // A4 width in mm
+            const pageHeight = 297; // A4 height in mm
+            const imgHeight = canvas.height * imgWidth / canvas.width;
+            
+            // Add image to PDF
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+            
+            // Download the PDF
+            pdf.save('Invoice_{{ order.invoice_number }}.pdf');
+            
+            // Remove loading indicator
+            document.body.removeChild(loadingElement);
+        });
+    }
+    
+    // Set page title to include invoice number
+    document.title = 'Invoice #{{ order.invoice_number }} - ELECTROGRAM LLC';
+</script>
+{% endblock %}

@@ -1,0 +1,291 @@
+{% extends 'partials/basenext.html' %}
+{% load static %}
+{% load humanize %}
+
+
+{% block content %}
+<!--====== App Content ======-->
+<div class="app-content">
+
+    <!--====== Section 1 ======-->
+    <div class="u-s-p-y-60">
+
+        <!--====== Section Content ======-->
+        <div class="section__content">
+            <div class="container">
+                <div class="breadcrumb">
+                    <div class="breadcrumb__wrap">
+                        <ul class="breadcrumb__list">
+                            <li class="has-separator">
+
+                                <a href="{% url 'base:index' %}">Home</a>
+                            </li>
+                            <li class="has-separator">
+                                <a href="{% url 'base:product_list' %}">Shop</a>
+                            </li>
+                            <li class="is-marked">
+
+                                <a href="{% url 'cart:cart' %}">Cart</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--====== End - Section 1 ======-->
+
+
+    <!--====== Section 2 ======-->
+    <div class="u-s-p-b-60">
+
+        <!--====== Section Intro ======-->
+        <div class="section__intro u-s-m-b-60">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="section__text-wrap">
+                            <h1 class="section__heading u-c-secondary">SHOPPING CART</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--====== End - Section Intro ======-->
+
+
+        <!--====== Section Content ======-->
+        <div class="section__content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 u-s-m-b-30">
+                        <div class="table-responsive">
+                            <table class="table-p">
+                                <tbody>
+                                    {% if cart_products %}
+
+                                    <!--====== Row ======-->
+                                    {% for products in cart_products %}
+                                    <tr>
+                                        <td>
+                                            <div class="table-p__box">
+                                                <div class="table-p__img-wrap">
+                                                    <img class="u-img-fluid" src="{{ products.get_image_url }}"
+                                                        alt="{{ products.title }}">
+                                                </div>
+                                                <div class="table-p__info">
+                                                    <span class="table-p__name">
+                                                        <a href=""> {{ products.title }}</a></span>
+                                                    <span class="table-p__category">
+                                                        <a href="">{{ products.category }}</a></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="table-p__price">{{ products.price| intcomma}}</span>
+
+                                        </td>
+                                        <td>
+                                            <div class="input-counter">
+                                                {% for key, value in quantities.items %}
+                                                {% if key == products.id|slugify %}
+                                                <input class="input-counter__text input-counter--text-primary-style"
+                                                    type="text" value="{{ value.quantity }}" data-min="1"
+                                                    data-max="1000" id="select-{{ products.id }}">
+                                                {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <div class="table-p__del-wrap">
+                                                <button type="button" data-index="{{ products.id }}"
+                                                    class="delete_product"
+                                                    style=" border-radius: 25%; outline: hidden; border: none; background-color: rgb(255, 197, 197);">
+                                                    <a class="far fa-trash-alt table-p__delete-link"></a>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="table-p__del-wrap">
+                                                <button type="button" data-index="{{ products.id }}" class="update_cart"
+                                                    style=" border-radius: 25%; outline: hidden; border: none;">
+                                                    <a class="fa fa-refresh table-p__delete-link"></a>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    <!--====== End - Row ======-->
+                                    {% else %}
+                                    <h1 class="centered-large-text">There is Nothing Here......</h1>
+                                    {% endif %}
+                                    <br><br><br><br><br>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="route-box">
+                            <div class="route-box__g1">
+                                <a class="route-box__link" href="{% url 'base:product_list' %}"><i
+                                        class="fas fa-long-arrow-alt-left"></i>
+                                    <span>CONTINUE SHOPPING</span></a>
+                            </div>
+                            {% if user.is_authenticated and cart_products %}
+                            <div class="route-box__g2">
+                                <a class="route-box__link" href="{% url 'payments:billing_info'%}"><i
+                                        class="fas fa-check"></i>
+                                    <span>PROCEED TO CHECKOUT</span></a>
+                            </div>
+                            {% else %}
+                            <div class="route-box__g2">
+                                <a href="{% url 'userauths:sign_in' %}" class="route-box__link">Sign in OR have items in your cart to
+                                    proceed to checkout.</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--====== End - Section Content ======-->
+    </div>
+    <!--====== End - Section 2 ======-->
+
+
+    <!--====== Section 3 ======-->
+    <div class="u-s-p-b-60">
+
+        <!--====== Section Content ======-->
+        <div class="section__content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 u-s-m-b-30">
+                        <form class="f-cart">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                            <div class="row">
+                                <div class="col-lg-4 col-lg-12 u-s-m-b-30">
+                                    <div class="f-cart__pad-box">
+                                        <div class="u-s-m-b-30">
+                                            <table class="f-cart__table">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>GRAND TOTAL</td>
+                                                        <td>Ugshs {{ total |intcomma }} /=</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div>
+                                            {% if cart_products %}
+                                                {% if user.is_authenticated %}
+                                                <a href="{% url 'payments:billing_info' %}" class="btn btn--e-brand-b-2">
+                                                    PROCEED TO
+                                                    CHECKOUT
+                                                </a>
+                                                {% else %}
+                                                <a href="{% url 'userauths:sign_in' %}?next={% url 'cart:cart' %}" class="btn btn--e-brand-b-2">
+                                                    SIGN IN TO
+                                                    CONTINUE
+                                                </a>
+                                                <p class="route-box__link">Your cart will be saved while you sign in</p>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--====== End - Section Content ======-->
+    </div>
+    <!--====== End - Section 3 ======-->
+</div>
+<!--====== End - App Content ======-->
+
+<div id="alert-container"></div>
+{% if messages %}
+<script>
+    $(function() {
+        {% for message in messages %}
+            alertify.{{ message.tags|default:"success" }}('{{ message|escapejs }}');
+        {% endfor %}
+    });
+</script>
+{% endif %}
+
+<script>
+    // update cart
+    $(document).on('click', '.update_cart', function (e) {
+        e.preventDefault();
+        var product__id = $(this).data('index');
+        var product_qty = $('#select-' + product__id).val();
+
+        console.log("Product ID: ", product__id);
+        console.log("Product Quantity: ", product_qty);
+
+        if (product_qty === '' || isNaN(product_qty) || product_qty < 1) {
+            displayMessage('Please select a valid quantity.', 'error');
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'cart:cart_update' %}',
+            data: {
+                product_id: product__id,
+                product_qty: product_qty,
+                csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
+                action: 'post'
+            },
+            success: function (json) {
+                if (json.message) {
+                    alertify.success(json.message);
+                }
+                location.reload();
+            },
+            error: function (xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+                console.log("Data sent: ", {
+                    product_id: product__id,
+                    product_qty: product_qty
+                });
+            }
+        });
+    });
+
+    // delete product from cart
+    $(document).on('click', '.delete_product', function (e) {
+        e.preventDefault();
+        var product__id = $(this).data('index');
+
+        console.log("Product ID: ", product__id);
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'cart:cart_delete' %}',
+            data: {
+                product_id: product__id,
+                csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
+                action: 'post'
+            },
+            success: function (json) {
+                if (json.message) {
+                    alertify.success(json.message);
+                }
+                location.reload();
+            },
+            error: function (xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    });
+
+</script>
+
+{% endblock %}

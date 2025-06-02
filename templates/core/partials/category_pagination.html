@@ -1,0 +1,41 @@
+{% if categories.paginator.num_pages > 1 %}
+<ul class="shop-p__pagination pagination" data-section="categories">
+    {% if categories.has_previous %}
+    <li class="page-item">
+        <a class="page-link first" href="#" aria-label="First" data-page="1">
+            <span aria-hidden="true">«</span>
+        </a>
+    </li>
+    <li class="page-item">
+        <a class="page-link prev" href="#" aria-label="Previous" data-page="{{ categories.previous_page_number }}">
+            <span aria-hidden="true">‹</span>
+        </a>
+    </li>
+    {% endif %}
+    
+    {% for num in categories.paginator.page_range %}
+        {% if num == categories.number %}
+            <li class="page-item active">
+                <span class="page-link">{{ num }}</span>
+            </li>
+        {% elif num > categories.number|add:-3 and num < categories.number|add:3 %}
+            <li class="page-item">
+                <a class="page-link" href="#" data-page="{{ num }}">{{ num }}</a>
+            </li>
+        {% endif %}
+    {% endfor %}
+    
+    {% if categories.has_next %}
+    <li class="page-item">
+        <a class="page-link next" href="#" aria-label="Next" data-page="{{ categories.next_page_number }}">
+            <span aria-hidden="true">›</span>
+        </a>
+    </li>
+    <li class="page-item">
+        <a class="page-link last" href="#" aria-label="Last" data-page="{{ categories.paginator.num_pages }}">
+            <span aria-hidden="true">»</span>
+        </a>
+    </li>
+    {% endif %}
+</ul>
+{% endif %} 

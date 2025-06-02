@@ -1,0 +1,246 @@
+{% extends 'partials/basenext.html' %}
+{% load static %}
+{% load form_filters %}
+
+{% block content %}
+<!--====== App Content ======-->
+<div class="app-content">
+
+    <!--====== Section 1 ======-->
+    <div class="u-s-p-y-60">
+
+        <!--====== Section Content ======-->
+        <div class="section__content">
+            <div class="container">
+                <div class="breadcrumb">
+                    <div class="breadcrumb__wrap">
+                        <ul class="breadcrumb__list">
+                            <li class="has-separator">
+
+                                <a href="{% url 'base:index' %}">Home</a>
+                            </li>
+                            <li class="is-marked">
+
+                                <a href="">My Account</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--====== End - Section 1 ======-->
+
+
+    <!--====== Section 2 ======-->
+    <div class="u-s-p-b-60">
+
+        <!--====== Section Content ======-->
+        <div class="section__content">
+            <div class="dash">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-12">
+
+                            <!--====== Dashboard Features ======-->
+                            <div class="dash__box dash__box--bg-white dash__box--shadow u-s-m-b-30">
+                                <div class="dash__pad-1">
+
+                                    <span class="dash__text u-s-m-b-16">Hello, <h2>{{ request.user.username }}</h2>
+                                    </span>
+                                    <ul class="dash__f-list">
+                                        <li>
+
+                                            <a href="{% url 'base:dashboard' %}">Manage My Account</a>
+                                        </li>
+                                        <li>
+
+                                            <a class="dash-active" href="{% url 'userauths:user_profile_update' %}">My
+                                                Profile</a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url 'base:delivery_update_info' %}">Address Book & Delivery
+                                                Info.</a>
+                                        </li>
+                                        <li>
+
+                                            <a href="{% url 'userauths:password_update' %}">Update Password</a>
+
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                            <!--====== End - Dashboard Features ======-->
+                        </div>
+                        <div class="col-lg-9 col-md-12">
+                            <div class="dash__box dash__box--shadow dash__box--radius dash__box--bg-white">
+                                <div class="dash__pad-2">
+                                    <h1 class="dash__h1 u-s-m-b-14">Edit Profile</h1>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+
+                                            <form method="post" id="profile-form" class="l-f-o__form" action="{% url 'userauths:user_profile_update' %}">
+                                                {% csrf_token %}
+                                                <div class="u-s-m-b-30">
+                                                    <label for="{{ profile_form.username.id_for_label }}" class="gl-label">Username</label>
+                                                    {{ profile_form.username|add_class:"input-text input-text--primary-style input-wide" }}
+                                                    {% if profile_form.username.errors %}
+                                                    <div class="error-message">
+                                                        {{ profile_form.username.errors }}
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="u-s-m-b-30">
+                                                    <label for="{{ profile_form.email.id_for_label }}" class="gl-label">Email</label>
+                                                    {{ profile_form.email|add_class:"input-text input-text--primary-style input-wide" }}
+                                                    {% if profile_form.email.errors %}
+                                                    <div class="error-message">
+                                                        {{ profile_form.email.errors }}
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="u-s-m-b-30">
+                                                    <label for="{{ profile_form.first_name.id_for_label }}" class="gl-label">First Name</label>
+                                                    {{ profile_form.first_name|add_class:"input-text input-text--primary-style input-wide" }}
+                                                    {% if profile_form.first_name.errors %}
+                                                    <div class="error-message">
+                                                        {{ profile_form.first_name.errors }}
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="u-s-m-b-30">
+                                                    <label for="{{ profile_form.last_name.id_for_label }}" class="gl-label">Last Name</label>
+                                                    {{ profile_form.last_name|add_class:"input-text input-text--primary-style input-wide" }}
+                                                    {% if profile_form.last_name.errors %}
+                                                    <div class="error-message">
+                                                        {{ profile_form.last_name.errors }}
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="u-s-m-b-15">
+                                                    <button class="btn btn--e-transparent-brand-b-2" type="submit" style=" border-radius: 10px; padding: 10px;" id="update-profile-btn">
+                                                        <span class="btn-loader"></span>
+                                                        <span class="btn-text">UPDATE</span>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                            <br>
+                                            <div class="u-s-m-b-15">
+                                                <span class="gl-label">
+                                                    Click here to update password
+                                                </span>
+                                                <a class="btn btn--e-transparent-brand-b-2"
+                                                    href="{% url 'userauths:password_update' %}"
+                                                    style=" border-radius: 10px; padding: 10px;">
+                                                    UPDATE PASSWORD
+                                                </a>
+                                            </div>
+                                            <br>
+                                            {% if profile_form.errors %}
+                                            <script>
+                                                {% for field in profile_form %}
+                                                {% for error in field.errors %}
+                                                alertify.error("{{ error }}"); // Display each field error as a red alert
+                                                {% endfor %}
+                                                {% endfor %}
+                                                {% for error in profile_form.non_field_errors %}
+                                                alertify.error("{{ error }}"); // Display non-field errors as red alerts
+                                                {% endfor %}
+                                            </script>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--====== End - Section Content ======-->
+    </div>
+    <!--====== End - Section 2 ======-->
+    {% if messages %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            {% for message in messages %}
+                alertify.{{ message.tags }}("{{ message }}");
+            {% endfor %}
+        });
+    </script>
+    {% endif %}
+
+    {% if profile_form.errors %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            {% for field in profile_form %}
+                {% for error in field.errors %}
+                    alertify.error("{{ error }}");
+                {% endfor %}
+            {% endfor %}
+            {% for error in profile_form.non_field_errors %}
+                alertify.error("{{ error }}");
+            {% endfor %}
+        });
+    </script>
+    {% endif %}
+</div>
+
+<!-- Button loader functionality is now handled by app2.js -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Display any existing messages
+    {% if messages %}
+        {% for message in messages %}
+            alertify.{{ message.tags }}("{{ message }}");
+        {% endfor %}
+    {% endif %}
+
+    // Display any form errors
+    {% if profile_form.errors %}
+        {% for field in profile_form %}
+            {% for error in field.errors %}
+                alertify.error("{{ error }}");
+            {% endfor %}
+        {% endfor %}
+        {% for error in profile_form.non_field_errors %}
+            alertify.error("{{ error }}");
+        {% endfor %}
+    {% endif %}
+
+    // Handle successful profile update
+    function onProfileUpdateSuccess(data) {
+        // Update the displayed username
+        const usernameElement = document.querySelector('.dash__text h2');
+        if (usernameElement && data.user_data) {
+            usernameElement.textContent = data.user_data.username;
+        }
+
+        // Update form fields with new data
+        if (data.user_data) {
+            const fields = ['username', 'email', 'first_name', 'last_name'];
+            fields.forEach(field => {
+                const input = document.querySelector(`#profile-form [name="${field}"]`);
+                if (input && data.user_data[field]) {
+                    input.value = data.user_data[field];
+                }
+            });
+        }
+    }
+
+
+    // Initialize the profile form with the centralized button loader
+    const profileForm = document.getElementById('profile-form');
+    if (profileForm) {
+        // This will be handled by app2.js
+        profileForm.addEventListener('ajax:success', function(event) {
+            const data = event.detail[0];
+            if (data.success && data.user_data) {
+                onProfileUpdateSuccess(data);
+            }
+        });
+    }
+});
+</script>
+{% endblock content %}

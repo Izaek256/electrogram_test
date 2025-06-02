@@ -1,0 +1,49 @@
+{% csrf_token %}
+{% load humanize %}
+<div class="row products-container position-relative" data-section-container="recent-products">
+    <div id="recent-products-loader" class="section-loader" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.8); z-index: 100;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <div style="background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.1); text-align: center;">
+                <i class="fas fa-spinner fa-spin fa-3x" style="color: #ff4500; margin-bottom: 10px;"></i>
+                <div style="font-weight: bold; color: #333;">Loading products...</div>
+            </div>
+        </div>
+    </div>
+    {% for product in products %}
+    <div class="col-lg-3 col-md-4 col-sm-6 u-s-m-b-30">
+        <div class="product-r u-h-100">
+            <div class="product-r__container">
+                <a class="aspect aspect--bg-grey aspect--square u-d-block"
+                    href="{% url 'base:product-detail' slug=product.slug %}">
+                    <img class="aspect__img" src="{{product.get_image_url}}" alt="{{product.title}}">
+                </a>
+            </div>
+            <div class="product-r__info-wrap text-center">
+                <span class="product-r__category d-block mb-2">
+                    <a href="{% url 'base:product_category_list' product.category.cid %}">{{product.category.title}}</a>
+                </span>
+                <span class="product-r__name d-block mb-2">
+                    <a href="{% url 'base:product-detail' slug=product.slug %}">{{product.title}}</a>
+                </span>
+                <span class="product-r__price d-block">Ugshs. {{product.price|intcomma}} /=</span>
+                <div class="pd-detail__inline">
+                    <span class="pd-detail__stock">{{ product.stock }} in stock</span>
+                    {% if product.stock <= 5 %}
+                    <span class="pd-detail__left">Only {{ product.stock }} left</span>
+                    {% endif %}
+                    {% if product.tags.all %}
+                    {% for tag in product.tags.all %}
+                    <span class="pd-detail__tag" data-tag="{{ tag.name }}">{{ tag.name }}</span>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div class="col-12">
+    <nav aria-label="Page navigation" class="d-flex justify-content-center mt-4">
+        {% include 'core/partials/pagination.html' with products=products section='recent-products' %}
+    </nav>
+</div>

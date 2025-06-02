@@ -1,0 +1,49 @@
+{% load humanize %}
+<div class="row products-container position-relative" data-section-container="daily-offer">
+    <div id="daily-offer-loader" class="section-loader" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.8); z-index: 100;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <div style="background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.1); text-align: center;">
+                <i class="fas fa-spinner fa-spin fa-3x" style="color: #ff4500; margin-bottom: 10px;"></i>
+                <div style="font-weight: bold; color: #333;">Loading products...</div>
+            </div>
+        </div>
+    </div>
+    {% for product in products %}
+    <div class="col-lg-6 col-md-6 col-sm-6 u-s-m-b-30">
+        <div class="product-short u-h-100">
+            <div class="product-short__container">
+                <div class="product-short__img-wrap">
+                    <a class="aspect aspect--bg-grey-fb aspect--square u-d-block" href="{% url 'base:product-detail' slug=product.slug %}">
+                        <img class="aspect__img product-short__img" src="{{product.get_image_url}}" alt="{{product.title}}">
+                    </a>
+                </div>
+                <div class="product-short__info text-center">
+                    <span class="product-short__category d-block mb-2">
+                        <a href="{% url 'base:product_category_list' product.category.cid %}">{{product.category.title}}</a>
+                    </span>
+                    <span class="product-short__name d-block mb-2">
+                        <a href="{% url 'base:product-detail' slug=product.slug %}">{{product.title}}</a>
+                    </span>
+                    <span class="product-short__price d-block">Ugshs. {{product.price|intcomma}} /=</span>
+                    <div class="pd-detail__inline">
+                        <span class="pd-detail__stock">{{ product.stock }} in stock</span>
+                        {% if product.stock <= 5 %}
+                        <span class="pd-detail__left">Only {{ product.stock }} left</span>
+                        {% endif %}
+                        {% if product.tags.all %}
+                        {% for tag in product.tags.all %}
+                        <span class="pd-detail__tag" data-tag="{{ tag.name }}">{{ tag.name }}</span>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div class="col-12">
+    <nav aria-label="Page navigation" class="d-flex justify-content-center mt-4">
+        {% include 'core/partials/pagination.html' with products=products section='daily-offer' %}
+    </nav>
+</div>

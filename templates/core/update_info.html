@@ -1,0 +1,291 @@
+{% extends 'partials/basenext.html' %}
+{% load static %}
+{% load form_filters %}
+{% block content %}
+
+        <!--====== App Content ======-->
+        <div class="app-content">
+
+            <!--====== Section 1 ======-->
+            <div class="u-s-p-y-60">
+
+                <!--====== Section Content ======-->
+                <div class="section__content">
+                    <div class="container">
+                        <div class="breadcrumb">
+                            <div class="breadcrumb__wrap">
+                                <ul class="breadcrumb__list">
+                                    <li class="has-separator">
+
+                                        <a href="{% url 'base:index' %}">Home</a></li>
+                                    <li class="is-marked">
+
+                                        <a href="{% url 'userauths:user_profile_update' %}">My Account</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--====== End - Section 1 ======-->
+
+
+            <!--====== Section 2 ======-->
+            <div class="u-s-p-b-60">
+
+                <!--====== Section Content ======-->
+                <div class="section__content">
+                    <div class="dash">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-3 col-md-12">
+
+                                    <!--====== Dashboard Features ======-->
+                                    <div class="dash__box dash__box--bg-white dash__box--shadow u-s-m-b-30">
+                                        <div class="dash__pad-1">
+        
+                                            <span class="dash__text u-s-m-b-16">Hello, <h2>{{ request.user.username }}</h2>
+                                                </span>
+                                            <ul class="dash__f-list">
+                                                <li>
+        
+                                                    <a  href="{% url 'base:dashboard' %}">Manage My Account</a>
+                                                </li>
+                                                <li>
+        
+                                                    <a href="{% url 'userauths:user_profile_update' %}">My Profile</a>
+                                                </li>
+                                                <li>
+        
+                                                    <a class="dash-active" href="{% url 'base:delivery_update_info' %}">Address Book & Delivery
+                                                        Info.</a>
+                                                </li>
+                                                <li>
+        
+                                                    <a href="{% url 'userauths:password_update' %}">Update Password</a>
+                                                        
+                                                </li>
+        
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <!--====== End - Dashboard Features ======-->
+                                </div>
+                                <div class="col-lg-9 col-md-12">
+                                    <div class="dash__box dash__box--shadow dash__box--radius dash__box--bg-white">
+                                        <div class="dash__pad-2">
+                                            <h1 class="dash__h1 u-s-m-b-14">Update Order and Delivery Information</h1>
+
+                                            <span class="dash__text u-s-m-b-30">Update your Delivery Information for proper Order placement</span>
+                                            <div class="dash__link dash__link--secondary u-s-m-b-30">
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <h1 class="dash__h1 u-s-m-b-14">Delivery Info</h1>
+                                                    <form method="post" id="delivery-form" class="l-f-o__form" action="{% url 'base:delivery_update_info' %}">
+                                                        {% csrf_token %}
+                                                        {{ form.non_field_errors }}
+                                                        <div class="u-s-m-b-30">
+                                                            <label for="{{ form.delivery_full_name.id_for_label }}" class="gl-label">Full Name</label>
+                                                            {{ form.delivery_full_name|add_class:"input-text input-text--primary-style input-wide" }}
+                                                            {% if form.delivery_full_name.errors %}
+                                                            <div class="error-message" style="color: #dc3545; font-size: 0.875rem; margin-top: 0.25rem;">
+                                                                {{ form.delivery_full_name.errors }}
+                                                            </div>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="u-s-m-b-30">
+                                                            <label for="{{ form.delivery_email.id_for_label }}" class="gl-label">Email</label>
+                                                            {{ form.delivery_email|add_class:"input-text input-text--primary-style input-wide" }}
+                                                            {% if form.delivery_email.errors %}
+                                                            <small class="form-text text-muted" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                                                Enter a valid email address. Orders will be sent to this email address.
+                                                            </small>
+                                                            <div class="error-message" style="color: #dc3545; font-size: 0.875rem; margin-top: 0.25rem;">
+                                                                {{ form.delivery_email.errors }}
+                                                            </div>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="u-s-m-b-30">
+                                                            <label for="{{ form.delivery_address.id_for_label }}" class="gl-label">Delivery Address</label>
+                                                            {{ form.delivery_address|add_class:"input-text input-text--primary-style input-wide" }}
+                                                            {% if form.delivery_address.errors %}
+                                                            <div class="error-message" style="color: #dc3545; font-size: 0.875rem; margin-top: 0.25rem;">
+                                                                {{ form.delivery_address.errors }}
+                                                            </div>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="u-s-m-b-30">
+                                                            <label for="{{ form.delivery_phone_number.id_for_label }}" class="gl-label">Enter Active Whatsapp number</label>
+                                                            {{ form.delivery_phone_number|add_class:"input-text input-text--primary-style input-wide" }}
+                                                            <small class="form-text text-muted" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                                                Enter 9 digits without the "0". The +256 prefix will be added automatically. 
+                                                            </small>
+                                                            {% if form.delivery_phone_number.errors %}
+                                                            <div class="error-message" style="color: #dc3545; font-size: 0.875rem; margin-top: 0.25rem;">
+                                                                {{ form.delivery_phone_number.errors }}
+                                                            </div>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="u-s-m-b-30">
+                                                            <label for="{{ form.delivery_city.id_for_label }}" class="gl-label">City</label>
+                                                            {{ form.delivery_city|add_class:"input-text input-text--primary-style input-wide" }}
+                                                            {% if form.delivery_city.errors %}
+                                                            <div class="error-message" style="color: #dc3545; font-size: 0.875rem; margin-top: 0.25rem;">
+                                                                {{ form.delivery_city.errors }}
+                                                            </div>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="u-s-m-b-30">
+                                                            <label for="{{ form.delivery_district.id_for_label }}" class="gl-label">District</label>
+                                                            {{ form.delivery_district|add_class:"input-text input-text--primary-style input-wide" }}
+                                                            {% if form.delivery_district.errors %}
+                                                            <div class="error-message" style="color: #dc3545; font-size: 0.875rem; margin-top: 0.25rem;">
+                                                                {{ form.delivery_district.errors }}
+                                                            </div>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="u-s-m-b-30">
+                                                            <label for="{{ form.details_about_address.id_for_label }}" class="gl-label">More Details</label>
+                                                            {{ form.details_about_address|add_class:"input-text input-text--primary-style input-wide" }}
+                                                            {% if form.details_about_address.errors %}
+                                                            <div class="error-message" style="color: #dc3545; font-size: 0.875rem; margin-top: 0.25rem;">
+                                                                {{ form.details_about_address.errors }}
+                                                            </div>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="u-s-m-b-15">
+                                                            <button class="btn btn--e-transparent-brand-b-2" type="submit" id="update-delivery-btn" style="border-radius: 10px; padding: 10px;">
+                                                                <span class="btn-text">UPDATE</span>
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                    <div class="u-s-m-b-15">
+                                                        <span class="gl-label u-s-m-b-15">
+                                                            Want to update password click here
+                                                        </span>
+                                                        <br>
+                                                        <a class="btn btn--e-transparent-brand-b-2 u-s-m-b-15" href="{% url 'userauths:password_update' %}" style=" padding: 15px; border-radius: 10px;">
+                                                            UPDATE PASSWORD
+                                                        </a>
+                                                    </div>
+                                                    {% if user_form.errors %}
+                                                    <div class="alert alert-danger">
+                                                        <ul>
+                                                            {% for field in user_form %}
+                                                            {% for error in field.errors %}
+                                                            <li>{{ error }}</li>
+                                                            {% endfor %}
+                                                            {% endfor %}
+                                                            {% for error in user_form.non_field_errors %}
+                                                            <li>{{ error }}</li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </div>
+                                                    {% endif %}
+
+                                                </div>
+                                            </row>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--====== End - Section Content ======-->
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Configure AlertifyJS
+                    alertify.set('notifier', 'position', 'top-right');
+                    alertify.set('notifier', 'delay', 5);
+                    
+                    // Handle form submission via AJAX
+                    const deliveryForm = document.getElementById('delivery-form');
+                    
+                    if (deliveryForm) {
+                        deliveryForm.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            
+                            // Get form data
+                            const formData = new FormData(deliveryForm);
+                            
+                            // Send AJAX request
+                            fetch(deliveryForm.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'X-CSRFToken': getCookie('csrftoken')
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Show success message
+                                    alertify.success(data.message);
+                                    
+                                    // Update form with new values if needed
+                                    if (data.delivery_data) {
+                                        // You can update form fields here if needed
+                                    }
+                                } else {
+                                    // Show error messages
+                                    if (data.errors) {
+                                        Object.keys(data.errors).forEach(field => {
+                                            alertify.error(data.errors[field][0]);
+                                        });
+                                    } else if (data.message) {
+                                        alertify.error(data.message);
+                                    }
+                                }
+                            })
+                            .catch(error => {
+                                alertify.error('An error occurred. Please try again.');
+                                console.error('Error:', error);
+                            });
+                        });
+                    }
+
+                    // Get CSRF token from cookie
+                    function getCookie(name) {
+                        let cookieValue = null;
+                        if (document.cookie && document.cookie !== '') {
+                            const cookies = document.cookie.split(';');
+                            for (let i = 0; i < cookies.length; i++) {
+                                const cookie = cookies[i].trim();
+                                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+
+                    // Display any existing messages
+                    {% if messages %}
+                        {% for message in messages %}
+                            alertify.{{ message.tags }}("{{ message }}");
+                        {% endfor %}
+                    {% endif %}
+
+                    // Display any form errors
+                    {% if form.errors %}
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                alertify.error("{{ error }}");
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            alertify.error("{{ error }}");
+                        {% endfor %}
+                    {% endif %}
+                });
+            </script>
+            <!--====== End - Section 2 ======-->
+        </div>
+{% endblock content %}

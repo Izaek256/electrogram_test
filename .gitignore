@@ -1,0 +1,50 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Backup files
+*.bak
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.env
+
+# Static files at build time
+/static_collected/
+
+# Node
+node_modules/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Database migrations (optional, uncomment if you want to ignore migrations)
+*/migrations/*.py
+!*/migrations/__init__.py
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini

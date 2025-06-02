@@ -1,0 +1,228 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Order Success - Invoice #{{ order.id }}</title>
+    <style>
+        /* Remove @import and keep only basic, xhtml2pdf-safe CSS */
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 15px;
+            background: #f4f8fb;
+            margin: 0;
+            padding: 0;
+            color: #222;
+        }
+        .container {
+            max-width: 820px;
+            margin: 30px auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 4px 24px #b3d2f7, 0 1.5px 4px #e3eaf2;
+            padding: 40px 48px 32px 48px;
+        }
+        .header-main {
+            width: 100%;
+            border-bottom: 3px solid #2a7ae2;
+            padding-bottom: 22px;
+            margin-bottom: 32px;
+            background: #2a7ae2;
+            border-radius: 12px 12px 0 0;
+            color: #fff;
+            display: table;
+        }
+        .logo {
+            height: 60px;
+            border-radius: 8px;
+            background: #fff;
+            padding: 6px 12px;
+            display: table-cell;
+            vertical-align: middle;
+        }
+        .company-info {
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 1px;
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+            width: 60%;
+        }
+        .qr-header {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: right;
+        }
+        .qr-header img {
+            border: 2px solid #2a7ae2;
+            border-radius: 8px;
+            background: #fff;
+            padding: 4px;
+        }
+        .header {
+            background: #2a7ae2;
+            color: #fff;
+            padding: 18px 24px;
+            border-radius: 0 0 8px 8px;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 28px;
+            letter-spacing: 1px;
+        }
+        .section {
+            margin-bottom: 22px;
+            padding: 14px 14px 8px 14px;
+            background: #f7faff;
+            border-radius: 8px;
+        }
+        .label {
+            color: #2a7ae2;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .value {
+            font-size: 16px;
+            font-weight: 500;
+            color: #222;
+            margin-left: 8px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            background: #fff;
+            border-radius: 8px;
+        }
+        .table th, .table td {
+            border: 1px solid #e3eaf2;
+            padding: 8px 6px;
+            text-align: left;
+        }
+        .table th {
+            background: #e3f0fc;
+            color: #2a7ae2;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .table td {
+            font-size: 15px;
+        }
+        .total {
+            font-weight: bold;
+            color: #2a7ae2;
+            font-size: 17px;
+            margin-top: 10px;
+        }
+        .qr {
+            margin-top: 24px;
+            text-align: center;
+        }
+        .qr img {
+            border: 2px solid #2a7ae2;
+            border-radius: 10px;
+            background: #fff;
+            padding: 6px;
+        }
+        ul {
+            margin: 0 0 0 18px;
+            padding: 0;
+        }
+        ul li {
+            font-size: 15px;
+            color: #444;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-main">
+            <div style="display: table-cell; vertical-align: middle;">
+                <img src="/static/images/logo/logo-1.png" alt="Company Logo" class="logo"/>
+            </div>
+            <div class="company-info">
+                {{ company_info.0|default:"Your Company Name" }}
+            </div>
+            <div class="qr-header">
+                {% if qr_code_url %}
+                    <img src="{{ qr_code_url }}" alt="QR Code" width="80" height="80"/>
+                {% endif %}
+            </div>
+        </div>
+        <div class="header">
+            Order Success - Invoice #{{ order.id }}
+        </div>
+        <div class="section">
+            <span class="label">Order Number:</span>
+            <span class="value">#{{ order.id }}</span>
+        </div>
+        <div class="section">
+            <span class="label">Invoice Date:</span>
+            <span class="value">{{ invoice_date }}</span>
+        </div>
+        {% if due_date %}
+        <div class="section">
+            <span class="label">Due Date:</span>
+            <span class="value">{{ due_date }}</span>
+        </div>
+        {% endif %}
+        <div class="section">
+            <span class="label">Phone:</span>
+            <span class="value">{{ phone_number }}</span>
+        </div>
+        <div class="section">
+            <span class="label">Delivery Address:</span>
+            <span class="value">
+                {% if delivery_address %}
+                    {{ delivery_address.delivery_full_name }}<br>
+                    {{ delivery_address.delivery_address }}, {{ delivery_address.delivery_city }}, {{ delivery_address.delivery_district }}<br>
+                    {{ delivery_address.delivery_email }}
+                {% else %}
+                    Not provided
+                {% endif %}
+            </span>
+        </div>
+        {% if company_info %}
+        <div class="section">
+            <span class="label">Company Info:</span>
+            <span class="value">
+                <ul>
+                {% for line in company_info %}
+                    <li>{{ line }}</li>
+                {% endfor %}
+                </ul>
+            </span>
+        </div>
+        {% endif %}
+        <div class="section">
+            <strong style="color:#2a7ae2;">Order Items:</strong>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order_items %}
+                    <tr>
+                        <td>{{ item.product.title }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.price|intcomma }}</td>
+                        <td>{{ item.total|intcomma }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p class="total">Grand Total: UGX {{ order.amount_paid|intcomma }}</p>
+        </div>
+        <div class="section" style="background:#e3f0fc; text-align:center; border-radius:8px;">
+            <p style="color:#2a7ae2; font-size:18px; font-weight:700; margin:0;">Thank you for your order!</p>
+        </div>
+    </div>
+</body>
+</html>
