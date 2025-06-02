@@ -19,6 +19,11 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://puny-arliene-izaek256-a7c8f3da.koyeb.app",
+]
+
+
 
 # --- APPLICATION DEFINITION ---
 
