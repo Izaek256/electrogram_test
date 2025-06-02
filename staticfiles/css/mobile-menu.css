@@ -1,0 +1,76 @@
+/* Mobile Menu Styles */
+@media screen and (max-width: 768px) {
+    .ah-list--design1 {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        margin: 0;
+        background: #fff;
+    }
+
+    .has-dropdown {
+        position: relative;
+        width: 100%;
+    }
+
+    .has-dropdown > a {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        color: #333;
+        border-bottom: 1px solid #eee;
+    }
+
+    .has-dropdown i {
+        margin-right: 10px;
+        font-size: 1.2em;
+    }
+
+    /* Show dropdown content by default on mobile */
+    .has-dropdown ul {
+        display: block !important;
+        position: relative;
+        width: 100% !important;
+        left: 0;
+        background: #f9f9f9;
+        box-shadow: none;
+        padding-left: 15px;
+    }
+
+    /* Hide toggle buttons on mobile */
+    .js-menu-toggle {
+        display: none;
+    }
+
+    /* Style dropdown items */
+    .has-dropdown ul li a {
+        padding: 12px 15px;
+        color: #666;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+    }
+
+    .has-dropdown ul li a i {
+        margin-right: 10px;
+    }
+
+    /* Nested dropdowns */
+    .has-dropdown--ul-left-100 ul {
+        padding-left: 30px;
+        background: #f5f5f5;
+    }
+
+    /* Active state */
+    .has-dropdown ul li a:active,
+    .has-dropdown ul li a:focus {
+        background: #f0f0f0;
+    }
+
+    /* Authentication section spacing */
+    .user-auth-section {
+        margin-top: 15px;
+        border-top: 2px solid #eee;
+        padding-top: 15px;
+    }
+}
