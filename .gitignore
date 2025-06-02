@@ -41,10 +41,6 @@ node_modules/
 .coverage
 htmlcov/
 
-# Database migrations (optional, uncomment if you want to ignore migrations)
-*/migrations/*.py
-!*/migrations/__init__.py
-
 # macOS
 .DS_Store
 
