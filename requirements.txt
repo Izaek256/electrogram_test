@@ -25,6 +25,7 @@ dash-core-components==2.0.0
 dash-html-components==2.0.0
 dash-table==5.0.0
 defusedxml==0.8.0rc2
+dj-database-url==2.3.0
 Django==5.0.6
 django-allauth==65.3.1
 django-environ==0.12.0

@@ -1,34 +1,26 @@
 from pathlib import Path
 import os
-from dotenv import load_dotenv
-from urllib.parse import urlparse
+import dj_database_url
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Load environment variables from .env file
-load_dotenv(os.path.join(BASE_DIR, '.env'))
-
-# Parse DATABASE_URL if it exists
-database_url = os.getenv("DATABASE_URL")
-if database_url:
-    tmpPostgres = urlparse(database_url)
-else:
-    tmpPostgres = None
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# --- SECURITY WARNINGS & ESSENTIAL ENVIRONMENT VARIABLES ---
+
 SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    raise ImproperlyConfigured("SECRET_KEY environment variable not set. Set it in your Koyeb environment or local .env file.")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
 
 
-# Application definition
+# --- APPLICATION DEFINITION ---
 
 INSTALLED_APPS = [
     'jazzmin',
@@ -49,16 +41,13 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     
-    #custom apps
+    # Custom apps
     'base',
     'cart',
     'payments',
     'userauths',
-    
 ]
 
-
-# Define SOCIALACCOUNT_PROVIDERS
 SOCIALACCOUNT_PROVIDERS = {}
 
 SOCIALACCOUNT_PROVIDERS['google'] = {
@@ -95,7 +84,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                
             ],
         },
     },
@@ -104,111 +92,87 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Store.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# --- DATABASE CONFIGURATION ---
+# Prioritize DATABASE_URL for external/production database (e.g., Neon)
+# Fallback to individual DB_* environment variables for a local PostgreSQL setup
 
-# Use DATABASE_URL if available, otherwise use individual environment variables
-if database_url and tmpPostgres:
-    # Parse query parameters for SSL mode
-    import urllib.parse as urlparse_module
-    query_params = urlparse_module.parse_qs(tmpPostgres.query)
-    ssl_mode = query_params.get('sslmode', ['prefer'])[0]
-    
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+if DATABASE_URL:
+    # Use DATABASE_URL for external/production database (e.g., Neon)
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': tmpPostgres.path[1:],  # Remove leading slash
-            'USER': tmpPostgres.username,
-            'PASSWORD': tmpPostgres.password,
-            'HOST': tmpPostgres.hostname,
-            'PORT': tmpPostgres.port or '5432',
-            'OPTIONS': {
-                'sslmode': ssl_mode,
-                'connect_timeout': 10,
-            }
-        }
-        
-        
-        
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True, # Explicitly require SSL as Neon uses it
+        )
     }
+    # Optional: You might want an extra check here if DATABASE_URL parsing somehow fails
+    # though dj_database_url is quite robust.
 else:
-    db_host = os.getenv('DB_HOST', 'localhost')
-    is_local = db_host in ['localhost', '127.0.0.1', '::1']
-    # Always disable SSL for local connections
-    ssl_mode = 'disable' if is_local else os.getenv('DB_SSLMODE', 'require')
-    
+    # Use individual DB_* environment variables for local PostgreSQL development
+    # Ensure these are set in your local .env file (and NOT on Koyeb)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': os.getenv('DB_NAME'),
             'USER': os.getenv('DB_USER'),
             'PASSWORD': os.getenv('DB_PASSWORD'),
-            'HOST': db_host,
-            'PORT': os.getenv('DB_PORT', '5432'),
+            'HOST': os.getenv('DB_HOST', 'localhost'), # Default to localhost for local PostgreSQL
+            'PORT': os.getenv('DB_PORT', '5432'),     # Default to 5432 for local PostgreSQL
             'OPTIONS': {
-                'sslmode': ssl_mode,
+                # For local PostgreSQL, SSL is usually 'disable' or 'prefer'.
+                # Make sure DB_SSLMODE is set to 'disable' or not set if using local.
+                'sslmode': os.getenv('DB_SSLMODE', 'disable'), 
                 'connect_timeout': 10,
             }
         }
     }
+    # Optional: For local setup, you might want to ensure these are set
+    if DEBUG and not all(os.getenv(var) for var in ['DB_NAME', 'DB_USER', 'DB_PASSWORD']):
+        # This will catch if local DB vars aren't set when DATABASE_URL is absent
+        print("WARNING: Using default DB settings for local development. Ensure DB_NAME, DB_USER, DB_PASSWORD are set in .env if using local PostgreSQL.")
 
 
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
+# --- PASSWORD VALIDATION ---
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    { 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
+    { 'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
+    { 'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
+    { 'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
+# --- INTERNATIONALIZATION ---
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
+# --- STATIC AND MEDIA FILES ---
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] 
 
-# Whitenoise configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
-
 MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
+# --- DEFAULT AUTO FIELD ---
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# --- JAZZMIN SETTINGS ---
 JAZZMIN_SETTINGS = {
     'site_header': "Electrogram Admin Panel",
     'site_brand': "Home Of Electronics",
 }
 
+
+# --- AUTHENTICATION & ALLAUTH SETTINGS ---
 AUTH_USER_MODEL = 'userauths.User'
 
 SITE_ID = 1
@@ -219,14 +183,14 @@ AUTHENTICATION_BACKENDS = (
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Example for Gmail
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() == 'true'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
-# =============Settings for Allauth========================
 
+# Allauth specific redirect URLs and account settings
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
